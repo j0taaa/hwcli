@@ -276,7 +276,7 @@ export const ProvidersLoginCommand = cmd({
   builder: (yargs) =>
     yargs
       .positional("url", {
-        describe: "opencode auth provider",
+        describe: "hwcli auth provider",
         type: "string",
       })
       .option("provider", {
@@ -355,6 +355,7 @@ export const ProvidersLoginCommand = cmd({
           anthropic: 4,
           openrouter: 5,
           vercel: 6,
+          "huawei-maas": 7,
         }
         const pluginProviders = resolvePluginProviders({
           hooks,
@@ -377,6 +378,7 @@ export const ProvidersLoginCommand = cmd({
               hint: {
                 opencode: "recommended",
                 openai: "ChatGPT Plus/Pro or API key",
+                "huawei-maas": "API token",
               }[x.id],
             })),
           ),

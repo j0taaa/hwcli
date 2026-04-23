@@ -88,6 +88,59 @@ test("provider loaded from env variable", async () => {
   })
 })
 
+test("huawei maas is present in builtin models catalog", async () => {
+  const providers = await ModelsDev.get()
+  const provider = providers["huawei-maas"]
+  expect(provider).toBeDefined()
+  if (!provider) throw new Error("Expected huawei-maas provider")
+  expect(provider.name).toBe("Huawei Cloud MaaS")
+  expect(provider.api).toBe("https://api-ap-southeast-1.modelarts-maas.com/openai/v1")
+  expect(provider.env).toEqual(["HUAWEI_CLOUD_MAAS_API_KEY"])
+  expect(Object.keys(provider.models)).toEqual([
+    "deepseek-v3.2",
+    "deepseek-v3.1-terminus",
+    "DeepSeek-V3",
+    "glm-5",
+    "glm-5.1",
+    "deepseek-r1-250528",
+  ])
+  expect(provider.models["glm-5.1"].limit).toEqual({
+    context: 198000,
+    input: 192000,
+    output: 128000,
+  })
+})
+
+test("huawei maas provider loaded from env variable", async () => {
+  await using tmp = await tmpdir({
+    init: async (dir) => {
+      await Bun.write(
+        path.join(dir, "opencode.json"),
+        JSON.stringify({
+          $schema: "https://opencode.ai/config.json",
+        }),
+      )
+    },
+  })
+  await Instance.provide({
+    directory: tmp.path,
+    init: async () => {
+      set("HUAWEI_CLOUD_MAAS_API_KEY", "test-api-key")
+    },
+    fn: async () => {
+      const providers = await list()
+      const provider = providers[ProviderID.make("huawei-maas")]
+      expect(provider).toBeDefined()
+      if (!provider) throw new Error("Expected huawei-maas provider")
+      expect(provider.source).toBe("env")
+      expect(provider.key).toBe("test-api-key")
+      expect(provider.models["deepseek-v3.2"].api.npm).toBe("@ai-sdk/openai-compatible")
+      expect(provider.models["deepseek-r1-250528"].capabilities.reasoning).toBe(true)
+      expect(provider.models["DeepSeek-V3"].capabilities.reasoning).toBe(false)
+    },
+  })
+})
+
 test("provider loaded from config with apiKey option", async () => {
   await using tmp = await tmpdir({
     init: async (dir) => {

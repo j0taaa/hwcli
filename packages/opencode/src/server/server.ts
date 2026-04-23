@@ -79,9 +79,9 @@ export async function openapi() {
   const result = await generateSpecs(app, {
     documentation: {
       info: {
-        title: "opencode",
+        title: "HWCLI",
         version: "1.0.0",
-        description: "opencode api",
+        description: "hwcli api",
       },
       openapi: "3.1.1",
     },

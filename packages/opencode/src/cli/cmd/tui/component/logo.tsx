@@ -87,6 +87,7 @@ const TAIL = 1.8
 const TRACE_IN = 200
 const GLOW_OUT = 1600
 const PEAK = RGBA.fromInts(255, 255, 255)
+const DARK_RED = RGBA.fromInts(139, 0, 0)
 
 type Ring = {
   x: number
@@ -865,7 +866,7 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean } = 
         {(line, index) => (
           <box flexDirection="row" gap={1}>
             <box flexDirection="row">
-              {renderLine(line, index(), props.ink ?? theme.textMuted, !!props.ink, 0, frame(), dusk(), idleState())}
+              {renderLine(line, index(), props.ink ?? DARK_RED, !!props.ink, 0, frame(), dusk(), idleState())}
             </box>
             <box flexDirection="row">
               {renderLine(

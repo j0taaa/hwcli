@@ -15,7 +15,7 @@ export const ConfigApi = HttpApi.make("config")
           OpenApi.annotations({
             identifier: "config.get",
             summary: "Get configuration",
-            description: "Retrieve the current OpenCode configuration settings and preferences.",
+            description: "Retrieve the current HWCLI configuration settings and preferences.",
           }),
         ),
         HttpApiEndpoint.get("providers", `${root}/providers`, {
@@ -37,7 +37,7 @@ export const ConfigApi = HttpApi.make("config")
   )
   .annotateMerge(
     OpenApi.annotations({
-      title: "opencode experimental HttpApi",
+      title: "HWCLI experimental HttpApi",
       version: "0.0.1",
       description: "Experimental HttpApi surface for selected instance routes.",
     }),

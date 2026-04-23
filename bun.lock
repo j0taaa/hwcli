@@ -317,6 +317,7 @@
       "version": "1.14.20",
       "bin": {
         "opencode": "./bin/opencode",
+        "hwcli": "./bin/hwcli",
       },
       "dependencies": {
         "@actions/core": "1.11.1",

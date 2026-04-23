@@ -18,7 +18,8 @@
     "db": "bun drizzle-kit"
   },
   "bin": {
-    "opencode": "./bin/opencode"
+    "opencode": "./bin/opencode",
+    "hwcli": "./bin/hwcli"
   },
   "exports": {
     "./*": "./src/*.ts"

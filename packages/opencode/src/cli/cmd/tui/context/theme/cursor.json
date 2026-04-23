@@ -46,16 +46,16 @@
   },
   "theme": {
     "primary": {
-      "dark": "darkCyan",
-      "light": "lightTeal"
+      "dark": "darkRed",
+      "light": "lightRed"
     },
     "secondary": {
       "dark": "darkBlue",
       "light": "lightBlue"
     },
     "accent": {
-      "dark": "darkCyan",
-      "light": "lightTeal"
+      "dark": "darkRedBright",
+      "light": "lightRedBright"
     },
     "error": {
       "dark": "darkRed",
@@ -98,8 +98,8 @@
       "light": "lightBorder"
     },
     "borderActive": {
-      "dark": "darkCyan",
-      "light": "lightTeal"
+      "dark": "darkRed",
+      "light": "lightRed"
     },
     "borderSubtle": {
       "dark": "#0f0f0f",

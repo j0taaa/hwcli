@@ -9,7 +9,7 @@ import catppuccin from "./theme/catppuccin.json" with { type: "json" }
 import catppuccinFrappe from "./theme/catppuccin-frappe.json" with { type: "json" }
 import catppuccinMacchiato from "./theme/catppuccin-macchiato.json" with { type: "json" }
 import cobalt2 from "./theme/cobalt2.json" with { type: "json" }
-import cursor from "./theme/cursor.json" with { type: "json" }
+import huawei from "./theme/cursor.json" with { type: "json" }
 import dracula from "./theme/dracula.json" with { type: "json" }
 import everforest from "./theme/everforest.json" with { type: "json" }
 import flexoki from "./theme/flexoki.json" with { type: "json" }
@@ -92,7 +92,7 @@ export const DEFAULT_THEMES: Record<string, ThemeJson> = {
   ["catppuccin-frappe"]: catppuccinFrappe,
   ["catppuccin-macchiato"]: catppuccinMacchiato,
   cobalt2,
-  cursor,
+  huawei,
   dracula,
   everforest,
   flexoki,
@@ -155,7 +155,7 @@ const [store, setStore] = createStore<State>({
   themes: listThemes(),
   mode: "dark",
   lock: undefined,
-  active: "opencode",
+  active: "huawei",
   ready: false,
 })
 
@@ -320,8 +320,12 @@ export const { use: useTheme, provider: ThemeProvider } = createSimpleContext({
         }
         draft.mode = mode
         draft.lock = lock
-        const active = config.theme ?? kv.get("theme", "opencode")
-        draft.active = typeof active === "string" ? active : "opencode"
+        const active = config.theme ?? kv.get("theme", "huawei")
+        draft.active = typeof active === "string" ? active : "huawei"
+        if (!config.theme && (draft.active === "opencode" || draft.active === "cursor")) {
+          draft.active = "huawei"
+          kv.set("theme", "huawei")
+        }
         draft.ready = false
       }),
     )

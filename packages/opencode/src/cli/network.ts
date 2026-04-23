@@ -20,8 +20,8 @@ const options = {
   },
   "mdns-domain": {
     type: "string" as const,
-    describe: "custom domain name for mDNS service (default: opencode.local)",
-    default: "opencode.local",
+    describe: "custom domain name for mDNS service (default: hwcli.local)",
+    default: "hwcli.local",
   },
   cors: {
     type: "string" as const,

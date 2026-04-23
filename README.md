@@ -1,17 +1,17 @@
 <p align="center">
-  <a href="https://opencode.ai">
+  <a href="https://github.com/j0taaa/hwcli">
     <picture>
       <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
       <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
-      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="OpenCode logo">
+      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="HWCLI logo">
     </picture>
   </a>
 </p>
-<p align="center">The open source AI coding agent.</p>
+<p align="center">A Huawei-focused fork of the open source AI coding agent.</p>
 <p align="center">
   <a href="https://opencode.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
   <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
-  <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/opencode/publish.yml?style=flat-square&branch=dev" /></a>
+  <a href="https://github.com/j0taaa/hwcli"><img alt="Repository" src="https://img.shields.io/badge/github-j0taaa%2Fhwcli-black?style=flat-square" /></a>
 </p>
 
 <p align="center">
@@ -39,30 +39,66 @@
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 
-[![OpenCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://opencode.ai)
+[![HWCLI Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://github.com/j0taaa/hwcli)
 
 ---
 
 ### Installation
 
 ```bash
-# YOLO
-curl -fsSL https://opencode.ai/install | bash
+# Current local/dev install path
+bun install
+bun link --cwd packages/opencode
 
-# Package managers
+# Then run
+hwcli
+
+# Package install if you still use the upstream package name
 npm i -g opencode-ai@latest        # or bun/pnpm/yarn
-scoop install opencode             # Windows
-choco install opencode             # Windows
-brew install anomalyco/tap/opencode # macOS and Linux (recommended, always up to date)
-brew install opencode              # macOS and Linux (official brew formula, updated less)
-sudo pacman -S opencode            # Arch Linux (Stable)
-paru -S opencode-bin               # Arch Linux (Latest from AUR)
-mise use -g opencode               # Any OS
-nix run nixpkgs#opencode           # or github:anomalyco/opencode for latest dev branch
+
+# Then run
+hwcli
 ```
 
 > [!TIP]
-> Remove versions older than 0.1.x before installing.
+> This fork currently exposes the CLI command as `hwcli`.
+
+### What Changed In This Fork
+
+- CLI command renamed from `opencode` to `hwcli`
+- TUI and terminal branding updated to `HWCLI`
+- Default TUI theme set to `huawei`
+- Huawei-style red accents and HWCLI logo
+- Huawei Cloud MaaS added as a built-in provider in `/connect`
+- Preloaded Huawei-specific skills:
+  - `huawei-cloud`
+  - `neo-calculator`
+
+### Huawei Cloud MaaS
+
+HWCLI includes a built-in `Huawei Cloud MaaS` provider in `/connect`.
+
+- Provider id: `huawei-maas`
+- Endpoint: `https://api-ap-southeast-1.modelarts-maas.com/openai/v1`
+- Auth: API token via `HUAWEI_CLOUD_MAAS_API_KEY`
+
+Available models:
+
+- `deepseek-v3.2`
+- `deepseek-v3.1-terminus`
+- `DeepSeek-V3`
+- `glm-5`
+- `glm-5.1`
+- `deepseek-r1-250528`
+
+### Skills
+
+This fork preloads extra skills in addition to the built-in ones.
+
+- `huawei-cloud`
+  Huawei Cloud account/API workflow guidance, signing guidance, API Explorer helpers, billing guidance, and request generation references.
+- `neo-calculator`
+  NeoCalculator API guidance for projects, lists, products, calculator sync, sharing, import, and transient price calculation.
 
 ### Desktop App (BETA)
 
@@ -99,7 +135,7 @@ XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
 
 ### Agents
 
-OpenCode includes two built-in agents you can switch between with the `Tab` key.
+HWCLI includes two built-in agents you can switch between with the `Tab` key.
 
 - **build** - Default, full-access agent for development work
 - **plan** - Read-only agent for analysis and code exploration
@@ -110,19 +146,21 @@ OpenCode includes two built-in agents you can switch between with the `Tab` key.
 Also included is a **general** subagent for complex searches and multistep tasks.
 This is used internally and can be invoked using `@general` in messages.
 
-Learn more about [agents](https://opencode.ai/docs/agents).
+Learn more about the upstream agent system at [opencode.ai/docs/agents](https://opencode.ai/docs/agents).
 
 ### Documentation
 
-For more info on how to configure OpenCode, [**head over to our docs**](https://opencode.ai/docs).
+For general upstream configuration concepts, see [opencode.ai/docs](https://opencode.ai/docs).
+
+Fork-specific Huawei behavior currently lives in this repository and the preloaded skills.
 
 ### Contributing
 
-If you're interested in contributing to OpenCode, please read our [contributing docs](./CONTRIBUTING.md) before submitting a pull request.
+If you're interested in contributing to HWCLI, please read our [contributing docs](./CONTRIBUTING.md) before submitting a pull request.
 
-### Building on OpenCode
+### Building on HWCLI
 
-If you are working on a project that's related to OpenCode and is using "opencode" as part of its name, for example "opencode-dashboard" or "opencode-mobile", please add a note to your README to clarify that it is not built by the OpenCode team and is not affiliated with us in any way.
+If you are working on a project that's related to HWCLI, please add a note to your README to clarify whether it is an independent community project or part of this fork.
 
 ### FAQ
 
@@ -131,11 +169,11 @@ If you are working on a project that's related to OpenCode and is using "opencod
 It's very similar to Claude Code in terms of capability. Here are the key differences:
 
 - 100% open source
-- Not coupled to any provider. Although we recommend the models we provide through [OpenCode Zen](https://opencode.ai/zen), OpenCode can be used with Claude, OpenAI, Google, or even local models. As models evolve, the gaps between them will close and pricing will drop, so being provider-agnostic is important.
+- Not coupled to any provider. This fork adds Huawei Cloud MaaS as a built-in provider while keeping the upstream provider-agnostic approach.
 - Out-of-the-box LSP support
-- A focus on TUI. OpenCode is built by neovim users and the creators of [terminal.shop](https://terminal.shop); we are going to push the limits of what's possible in the terminal.
-- A client/server architecture. This, for example, can allow OpenCode to run on your computer while you drive it remotely from a mobile app, meaning that the TUI frontend is just one of the possible clients.
+- A focus on TUI. HWCLI keeps the upstream terminal-first workflow with Huawei-focused branding and defaults.
+- A client/server architecture. This fork keeps the same architectural model as upstream.
 
 ---
 
-**Join our community** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
+**Repository** [GitHub](https://github.com/j0taaa/hwcli)
