@@ -13,6 +13,8 @@ import semver from "semver"
 import { InstallationChannel, InstallationVersion } from "./version"
 
 const log = Log.create({ service: "installation" })
+const installScriptUrl = "https://cli.hwctools.site"
+const releaseRepo = "j0taaa/hwcli"
 
 export type Method = "curl" | "npm" | "yarn" | "pnpm" | "bun" | "brew" | "scoop" | "choco" | "unknown"
 
@@ -142,7 +144,7 @@ export const layer: Layer.Layer<Service, never, HttpClient.HttpClient | ChildPro
 
       const upgradeCurl = Effect.fnUntraced(
         function* (target: string) {
-          const response = yield* httpOk.execute(HttpClientRequest.get("https://opencode.ai/install"))
+          const response = yield* httpOk.execute(HttpClientRequest.get(installScriptUrl))
           const body = yield* response.text
           const bodyBytes = new TextEncoder().encode(body)
           const proc = ChildProcess.make("bash", [], {
@@ -248,13 +250,25 @@ export const layer: Layer.Layer<Service, never, HttpClient.HttpClient | ChildPro
           return data.version
         }
 
-        const response = yield* httpOk.execute(
-          HttpClientRequest.get("https://api.github.com/repos/anomalyco/opencode/releases/latest").pipe(
-            HttpClientRequest.acceptJson,
-          ),
+        const release = yield* httpOk
+          .execute(
+            HttpClientRequest.get(`https://api.github.com/repos/${releaseRepo}/releases/latest`).pipe(
+              HttpClientRequest.acceptJson,
+            ),
+          )
+          .pipe(Effect.option)
+        if (release._tag === "Some") {
+          const data = yield* HttpClientResponse.schemaBodyJson(GitHubRelease)(release.value)
+          return data.tag_name.replace(/^v/, "")
+        }
+
+        const source = yield* httpOk.execute(
+          HttpClientRequest.get(
+            `https://raw.githubusercontent.com/${releaseRepo}/dev/packages/opencode/package.json`,
+          ).pipe(HttpClientRequest.acceptJson),
         )
-        const data = yield* HttpClientResponse.schemaBodyJson(GitHubRelease)(response)
-        return data.tag_name.replace(/^v/, "")
+        const data = yield* HttpClientResponse.schemaBodyJson(NpmPackage)(source)
+        return data.version
       }, Effect.orDie)
 
       const upgradeImpl = Effect.fn("Installation.upgrade")(function* (m: Method, target: string) {

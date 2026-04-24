@@ -46,15 +46,8 @@
 ### Installation
 
 ```bash
-# Current local/dev install path
-bun install
-bun link --cwd packages/opencode
-
-# Then run
-hwcli
-
-# Package install if you still use the upstream package name
-npm i -g opencode-ai@latest        # or bun/pnpm/yarn
+# Linux/macOS single-command install
+curl -fsSL https://cli.hwctools.site | bash
 
 # Then run
 hwcli
@@ -62,6 +55,15 @@ hwcli
 
 > [!TIP]
 > This fork currently exposes the CLI command as `hwcli`.
+
+### Local Development Install
+
+```bash
+bun install
+bun link --cwd packages/opencode
+
+hwcli
+```
 
 ### What Changed In This Fork
 
@@ -124,13 +126,13 @@ The install script respects the following priority order for the installation pa
 
 1. `$OPENCODE_INSTALL_DIR` - Custom installation directory
 2. `$XDG_BIN_DIR` - XDG Base Directory Specification compliant path
-3. `$HOME/bin` - Standard user binary directory (if it exists or can be created)
+3. `$HOME/.local/bin` - Standard user bin directory when it is already on `PATH`
 4. `$HOME/.opencode/bin` - Default fallback
 
 ```bash
 # Examples
-OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://opencode.ai/install | bash
-XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
+OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://cli.hwctools.site | bash
+XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://cli.hwctools.site | bash
 ```
 
 ### Agents

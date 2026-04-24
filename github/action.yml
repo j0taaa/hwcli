@@ -45,7 +45,7 @@ runs:
       id: version
       shell: bash
       run: |
-        VERSION=$(curl -sf https://api.github.com/repos/anomalyco/opencode/releases/latest | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
+        VERSION=$(curl -sf https://api.github.com/repos/j0taaa/hwcli/releases/latest | grep -o '"tag_name": *"[^"]*"' | cut -d'"' -f4)
         echo "version=${VERSION:-latest}" >> $GITHUB_OUTPUT
 
     - name: Cache opencode
@@ -53,12 +53,12 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.opencode/bin
-        key: opencode-${{ runner.os }}-${{ runner.arch }}-${{ steps.version.outputs.version }}
+        key: hwcli-${{ runner.os }}-${{ runner.arch }}-${{ steps.version.outputs.version }}
 
     - name: Install opencode
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
-      run: curl -fsSL https://opencode.ai/install | bash
+      run: XDG_BIN_DIR="$HOME/.opencode/bin" curl -fsSL https://cli.hwctools.site | bash
 
     - name: Add opencode to PATH
       shell: bash

