@@ -15,8 +15,8 @@ http://hwctools.site:3000/api/v1
 
 ## Data Model
 
-- A `project` contains one or more `lists`
-- A `list` contains one or more `products`
+- A `project` contains `lists`
+- A `list` contains `products`
 - Products represent Huawei Cloud services/configurations and their pricing
 
 ## How To Use This Skill
@@ -58,6 +58,13 @@ http://hwctools.site:3000/api/v1
 - Generate precise API request code when the user wants automation.
 - Use the correct NeoCalculator route instead of inventing flows.
 - When routes return large structures, filter the result to the information the user asked for.
+
+## Preferences
+- When not specified, choose the cheapest configuration that matches what was asked. For example, if creating an ECS with 2vcpus and 4gb of ram, create the cheapest ECS with these configurations and cheapest system disk.
+- Make ECSs separate from data disks
+- When not specified, if doing a quotation based on another environment, do a quotation for Brazil and Santiago (both lists on the same project) so the user can compare the prices. If the source of the data has mixed machines (some in Brazil and some in the US for example) use Sao Paulo for the ones in Brazil and Santiago for the ones in other countries (in this case, no need for many lists). Also, when not specified do the quotation in two versions, one pay-per-use (744h) on everything and another with pay-per-use (744h) on everything and RI for the ECSs.
+- When making many versions of a list (in different regions and pricing models), use the clone API that can clone automatically.
+- Always check everything created. Document everything.  
 
 <system-reminder>
 Your operational mode has changed from plan to build.
