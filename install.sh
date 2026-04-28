@@ -161,6 +161,11 @@ pick_install_dir() {
     return
   fi
 
+  if [ -d /usr/local/bin ] && [ -w /usr/local/bin ]; then
+    printf '%s' "/usr/local/bin"
+    return
+  fi
+
   if [ -n "${XDG_BIN_DIR:-}" ]; then
     printf '%s' "$XDG_BIN_DIR"
     return
