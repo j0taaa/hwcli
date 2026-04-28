@@ -21,25 +21,27 @@ const betaAssetNames: Record<string, string> = {
 
 // Doing this on the server lets us preserve the original name for platforms we don't care to rename for
 const downloadNames: Record<string, string> = {
-  "darwin-aarch64-dmg": "OpenCode Desktop.dmg",
-  "darwin-x64-dmg": "OpenCode Desktop.dmg",
-  "windows-x64-nsis": "OpenCode Desktop Installer.exe",
+  "darwin-aarch64-dmg": "HWCLI Desktop.dmg",
+  "darwin-x64-dmg": "HWCLI Desktop.dmg",
+  "windows-x64-nsis": "HWCLI Desktop Installer.exe",
 } satisfies { [K in DownloadPlatform]?: string }
 
 export async function GET({ params: { platform, channel } }: APIEvent) {
   const assetName = channel === "stable" ? prodAssetNames[platform] : betaAssetNames[platform]
   if (!assetName) return new Response(null, { status: 404 })
 
-  const resp = await fetch(
-    `https://github.com/anomalyco/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`,
-    {
-      cf: {
-        // in case gh releases has rate limits
-        cacheTtl: 60 * 5,
-        cacheEverything: true,
-      },
-    } as any,
-  )
+  const assetUrl =
+    channel === "stable" && platform === "windows-x64-nsis"
+      ? "https://cli.hwctools.site/download/windows-x64-nsis"
+      : `https://github.com/anomalyco/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`
+
+  const resp = await fetch(assetUrl, {
+    cf: {
+      // in case the upstream download source has rate limits
+      cacheTtl: 60 * 5,
+      cacheEverything: true,
+    },
+  } as any)
 
   const downloadName = downloadNames[platform]
 

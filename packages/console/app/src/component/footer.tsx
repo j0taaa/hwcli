@@ -1,6 +1,4 @@
-import { createAsync } from "@solidjs/router"
 import { createMemo } from "solid-js"
-import { github } from "~/lib/github"
 import { config } from "~/config"
 import { useLanguage } from "~/context/language"
 import { useI18n } from "~/context/i18n"
@@ -14,23 +12,8 @@ export function Footer() {
       ? ({ key: "footer.feishu", link: language.route("/feishu") } as const)
       : ({ key: "footer.discord", link: language.route("/discord") } as const)
   })
-  const githubData = createAsync(() => github())
-  const starCount = createMemo(() =>
-    githubData()?.stars
-      ? new Intl.NumberFormat(language.tag(language.locale()), {
-          notation: "compact",
-          compactDisplay: "short",
-        }).format(githubData()!.stars!)
-      : config.github.starsFormatted.compact,
-  )
-
   return (
     <footer data-component="footer">
-      <div data-slot="cell">
-        <a href={config.github.repoUrl} target="_blank">
-          {i18n.t("footer.github")} <span>[{starCount()}]</span>
-        </a>
-      </div>
       <div data-slot="cell">
         <a href={language.route("/docs")}>{i18n.t("footer.docs")}</a>
       </div>

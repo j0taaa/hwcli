@@ -1,9 +1,7 @@
-import { A, createAsync, useNavigate } from "@solidjs/router"
+import { A, useNavigate } from "@solidjs/router"
 import "./workspace.css"
 import { Title } from "@solidjs/meta"
-import { github } from "~/lib/github"
-import { createEffect, createMemo, For, onMount } from "solid-js"
-import { config } from "~/config"
+import { createEffect, For, onMount } from "solid-js"
 import { createList } from "solid-list"
 import { useLanguage } from "~/context/language"
 import { LanguagePicker } from "~/component/language-picker"
@@ -13,16 +11,6 @@ export default function BlackWorkspace() {
   const navigate = useNavigate()
   const language = useLanguage()
   const i18n = useI18n()
-  const githubData = createAsync(() => github())
-  const starCount = createMemo(() =>
-    githubData()?.stars
-      ? new Intl.NumberFormat(language.tag(language.locale()), {
-          notation: "compact",
-          compactDisplay: "short",
-        }).format(githubData()!.stars!)
-      : config.github.starsFormatted.compact,
-  )
-
   // TODO: Frank, replace with real workspaces
   const workspaces = [
     { id: "wrk_123", n: 1 },
@@ -217,9 +205,6 @@ export default function BlackWorkspace() {
           <span data-slot="anomaly">
             ©{new Date().getFullYear()} <a href="https://anoma.ly">Anomaly</a>
           </span>
-          <a href={config.github.repoUrl} target="_blank">
-            {i18n.t("nav.github")} <span data-slot="github-stars">[{starCount()}]</span>
-          </a>
           <a href={language.route("/docs")}>{i18n.t("nav.docs")}</a>
           <LanguagePicker align="right" />
           <span>

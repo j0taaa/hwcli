@@ -1,17 +1,14 @@
 <p align="center">
-  <a href="https://github.com/j0taaa/hwcli">
-    <picture>
-      <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
-      <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
-      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="HWCLI logo">
-    </picture>
-  </a>
+  <picture>
+    <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
+    <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
+    <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="HWCLI logo">
+  </picture>
 </p>
 <p align="center">A Huawei-focused fork of the open source AI coding agent.</p>
 <p align="center">
   <a href="https://opencode.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
   <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
-  <a href="https://github.com/j0taaa/hwcli"><img alt="Repository" src="https://img.shields.io/badge/github-j0taaa%2Fhwcli-black?style=flat-square" /></a>
 </p>
 
 <p align="center">
@@ -39,7 +36,7 @@
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 
-[![HWCLI Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://github.com/j0taaa/hwcli)
+![HWCLI Terminal UI](packages/web/src/assets/lander/screenshot.png)
 
 ---
 
@@ -177,5 +174,3 @@ It's very similar to Claude Code in terms of capability. Here are the key differ
 - A client/server architecture. This fork keeps the same architectural model as upstream.
 
 ---
-
-**Repository** [GitHub](https://github.com/j0taaa/hwcli)

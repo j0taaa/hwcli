@@ -1,6 +1,6 @@
 import { createMemo, For, Match, Switch } from "solid-js"
 import { Button } from "@opencode-ai/ui/button"
-import { Logo } from "@opencode-ai/ui/logo"
+import { Mark } from "@opencode-ai/ui/logo"
 import { useLayout } from "@/context/layout"
 import { useNavigate } from "@solidjs/router"
 import { base64Encode } from "@opencode-ai/shared/util/encode"
@@ -70,7 +70,27 @@ export default function Home() {
 
   return (
     <div class="mx-auto mt-55 w-full md:w-auto px-4">
-      <Logo class="md:w-xl opacity-12" />
+      <div class="mx-auto flex max-w-xl flex-col items-center text-center">
+        <div class="inline-flex items-center gap-3 rounded-full border border-border-critical-base bg-surface-critical-base px-4 py-2 text-12-regular text-text-diff-delete-strong">
+          <Mark class="h-5 w-4" />
+          <span style={{ "letter-spacing": "0.22em" }}>HUAWEI THEMED</span>
+        </div>
+        <h1
+          class="mt-6 text-text-strong"
+          style={{
+            "font-size": "clamp(3rem, 9vw, 5.5rem)",
+            "font-weight": "700",
+            "letter-spacing": "0.28em",
+            "padding-left": "0.28em",
+            "line-height": "0.95",
+          }}
+        >
+          HWCLI
+        </h1>
+        <p class="mt-3 text-12-regular text-text-weak" style={{ "letter-spacing": "0.18em" }}>
+          RED-ACCENTED TERMINAL CONTROL
+        </p>
+      </div>
       <Button
         size="large"
         variant="ghost"

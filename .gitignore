@@ -12,6 +12,8 @@ tmp
 dist
 ts-dist
 .turbo
+test-results/
+packages/desktop/src-tauri/release/
 **/.serena
 .serena/
 /result

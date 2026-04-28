@@ -8,7 +8,6 @@ import { Header } from "~/component/header"
 import { IconCheck, IconCopy } from "~/component/icon"
 import { Legal } from "~/component/legal"
 import { LocaleLinks } from "~/component/locale-links"
-import { config } from "~/config"
 import { useI18n } from "~/context/i18n"
 import { useLanguage } from "~/context/language"
 import desktopAppIcon from "../../asset/lander/opencode-desktop-icon.png"
@@ -99,15 +98,26 @@ export default function Download() {
             <div data-component="hero-text">
               <h1>{i18n.t("download.hero.title")}</h1>
               <p>{i18n.t("download.hero.subtitle")}</p>
-              <Show when={detectedOS()}>
-                <a
-                  href={language.route(getDownloadHref(getDownloadPlatform(detectedOS())))}
-                  data-component="download-button"
-                >
-                  <IconDownload />
-                  {i18n.t("download.hero.button", { os: detectedOS()! })}
-                </a>
-              </Show>
+              <div data-component="download-actions">
+                <Show when={detectedOS()}>
+                  <a
+                    href={language.route(getDownloadHref(getDownloadPlatform(detectedOS())))}
+                    data-component="download-button"
+                  >
+                    <IconDownload />
+                    {i18n.t("download.hero.button", { os: detectedOS()! })}
+                  </a>
+                </Show>
+                <Show when={detectedOS() !== "Windows"}>
+                  <a
+                    href={language.route(getDownloadHref("windows-x64-nsis"))}
+                    data-component="download-button-secondary"
+                  >
+                    <IconDownload />
+                    Download for Windows
+                  </a>
+                </Show>
+              </div>
             </div>
           </section>
 
@@ -461,14 +471,8 @@ export default function Download() {
             </li>
             <li>
               <Faq question={i18n.t("home.faq.q8")}>
-                {i18n.t("home.faq.a8.p1")}{" "}
-                <a href={config.github.repoUrl} target="_blank">
-                  {i18n.t("nav.github")}
-                </a>{" "}
-                {i18n.t("home.faq.a8.p2")}{" "}
-                <a href={`${config.github.repoUrl}?tab=MIT-1-ov-file#readme`} target="_blank">
-                  {i18n.t("home.faq.a8.mitLicense")}
-                </a>
+                {i18n.t("home.faq.a8.p1")} {i18n.t("nav.github")} {i18n.t("home.faq.a8.p2")}{" "}
+                {i18n.t("home.faq.a8.mitLicense")}
                 {i18n.t("home.faq.a8.p3")}
               </Faq>
             </li>

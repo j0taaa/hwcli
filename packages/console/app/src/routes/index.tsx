@@ -713,14 +713,8 @@ export default function Home() {
               </li>
               <li>
                 <Faq question={i18n.t("home.faq.q8")}>
-                  {i18n.t("home.faq.a8.p1")}{" "}
-                  <a href={config.github.repoUrl} target="_blank">
-                    {i18n.t("nav.github")}
-                  </a>{" "}
-                  {i18n.t("home.faq.a8.p2")}{" "}
-                  <a href={`${config.github.repoUrl}?tab=MIT-1-ov-file#readme`} target="_blank">
-                    {i18n.t("home.faq.a8.mitLicense")}
-                  </a>
+                  {i18n.t("home.faq.a8.p1")} {i18n.t("nav.github")} {i18n.t("home.faq.a8.p2")}{" "}
+                  {i18n.t("home.faq.a8.mitLicense")}
                   {i18n.t("home.faq.a8.p3")}
                 </Faq>
               </li>

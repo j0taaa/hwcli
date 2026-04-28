@@ -13,12 +13,10 @@ import copyLogoSvgLight from "../asset/lander/opencode-logo-light.svg"
 import copyLogoSvgDark from "../asset/lander/opencode-logo-dark.svg"
 import copyWordmarkSvgLight from "../asset/lander/opencode-wordmark-light.svg"
 import copyWordmarkSvgDark from "../asset/lander/opencode-wordmark-dark.svg"
-import { A, createAsync, useNavigate } from "@solidjs/router"
-import { createMemo, Match, Show, Switch } from "solid-js"
+import { A, useNavigate } from "@solidjs/router"
+import { Match, Show, Switch } from "solid-js"
 import { createStore } from "solid-js/store"
-import { github } from "~/lib/github"
 import { createEffect, onCleanup } from "solid-js"
-import { config } from "~/config"
 import { useI18n } from "~/context/i18n"
 import { useLanguage } from "~/context/language"
 import "./header-context-menu.css"
@@ -40,16 +38,6 @@ export function Header(props: { zen?: boolean; go?: boolean; hideGetStarted?: bo
   const navigate = useNavigate()
   const i18n = useI18n()
   const language = useLanguage()
-  const githubData = createAsync(() => github())
-  const starCount = createMemo(() =>
-    githubData()?.stars
-      ? new Intl.NumberFormat("en-US", {
-          notation: "compact",
-          compactDisplay: "short",
-          maximumFractionDigits: 0,
-        }).format(githubData()?.stars)
-      : config.github.starsFormatted.compact,
-  )
 
   const [store, setStore] = createStore({
     mobileMenuOpen: false,
@@ -154,11 +142,6 @@ export function Header(props: { zen?: boolean; go?: boolean; hideGetStarted?: bo
       <nav data-component="nav-desktop">
         <ul>
           <li>
-            <a href={config.github.repoUrl} target="_blank" style="white-space: nowrap;">
-              {i18n.t("nav.github")} <span>[{starCount()}]</span>
-            </a>
-          </li>
-          <li>
             <a href={language.route("/docs")}>{i18n.t("nav.docs")}</a>
           </li>
           <li>
@@ -249,11 +232,6 @@ export function Header(props: { zen?: boolean; go?: boolean; hideGetStarted?: bo
               <ul>
                 <li>
                   <A href={language.route("/")}>{i18n.t("nav.home")}</A>
-                </li>
-                <li>
-                  <a href={config.github.repoUrl} target="_blank" style="white-space: nowrap;">
-                    {i18n.t("nav.github")} <span>[{starCount()}]</span>
-                  </a>
                 </li>
                 <li>
                   <a href={language.route("/docs")}>{i18n.t("nav.docs")}</a>

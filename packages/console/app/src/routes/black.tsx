@@ -1,7 +1,6 @@
-import { A, createAsync, RouteSectionProps } from "@solidjs/router"
+import { A, RouteSectionProps } from "@solidjs/router"
 import { Title, Meta } from "@solidjs/meta"
 import { createMemo, createSignal } from "solid-js"
-import { github } from "~/lib/github"
 import { config } from "~/config"
 import { useLanguage } from "~/context/language"
 import { LanguagePicker } from "~/component/language-picker"
@@ -13,16 +12,6 @@ import "./black.css"
 export default function BlackLayout(props: RouteSectionProps) {
   const language = useLanguage()
   const i18n = useI18n()
-  const githubData = createAsync(() => github())
-  const starCount = createMemo(() =>
-    githubData()?.stars
-      ? new Intl.NumberFormat(language.tag(language.locale()), {
-          notation: "compact",
-          compactDisplay: "short",
-        }).format(githubData()!.stars!)
-      : config.github.starsFormatted.compact,
-  )
-
   const [spotlightAnimationState, setSpotlightAnimationState] = createSignal<SpotlightAnimationState>({
     time: 0,
     intensity: 0.5,
@@ -262,9 +251,6 @@ export default function BlackLayout(props: RouteSectionProps) {
           <span data-slot="anomaly">
             ©{new Date().getFullYear()} <a href="https://anoma.ly">Anomaly</a>
           </span>
-          <a href={config.github.repoUrl} target="_blank">
-            {i18n.t("nav.github")} <span data-slot="github-stars">[{starCount()}]</span>
-          </a>
           <a href={language.route("/docs")}>{i18n.t("nav.docs")}</a>
           <LanguagePicker align="right" />
           <span>

@@ -2,7 +2,7 @@ import { render } from "solid-js/web"
 import { MetaProvider } from "@solidjs/meta"
 import "@opencode-ai/app/index.css"
 import { Font } from "@opencode-ai/ui/font"
-import { Splash } from "@opencode-ai/ui/logo"
+import { Mark } from "@opencode-ai/ui/logo"
 import { Progress } from "@opencode-ai/ui/progress"
 import "./styles.css"
 import { createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js"
@@ -70,15 +70,37 @@ render(() => {
     <MetaProvider>
       <div class="w-screen h-screen bg-background-base flex items-center justify-center">
         <Font />
-        <div class="flex flex-col items-center gap-11">
-          <Splash class="w-20 h-25 opacity-15" />
-          <div class="w-60 flex flex-col items-center gap-4" aria-live="polite">
+        <div class="flex flex-col items-center gap-8">
+          <div class="flex flex-col items-center gap-4 text-center">
+            <div class="inline-flex items-center gap-3 rounded-full border border-border-interactive-base bg-surface-critical-base px-4 py-2 text-12-regular text-text-diff-delete-strong">
+              <Mark class="h-5 w-4" />
+              <span style={{ "letter-spacing": "0.22em" }}>HWCLI</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <div
+                class="text-text-strong"
+                style={{
+                  "font-size": "clamp(2.75rem, 8vw, 4.75rem)",
+                  "font-weight": "700",
+                  "letter-spacing": "0.22em",
+                  "padding-left": "0.22em",
+                  "line-height": "0.95",
+                }}
+              >
+                HWCLI
+              </div>
+              <div class="text-12-regular text-text-weak" style={{ "letter-spacing": "0.16em" }}>
+                CODING AGENT FOR HUAWEI CLOUD
+              </div>
+            </div>
+          </div>
+          <div class="w-72 flex flex-col items-center gap-4" aria-live="polite">
             <span class="w-full overflow-hidden text-center text-ellipsis whitespace-nowrap text-text-strong text-14-normal">
               {status()}
             </span>
             <Progress
               value={value()}
-              class="w-20 [&_[data-slot='progress-track']]:h-1 [&_[data-slot='progress-track']]:border-0 [&_[data-slot='progress-track']]:rounded-none [&_[data-slot='progress-track']]:bg-surface-weak [&_[data-slot='progress-fill']]:rounded-none [&_[data-slot='progress-fill']]:bg-icon-warning-base"
+              class="w-24 [&_[data-slot='progress-track']]:h-1 [&_[data-slot='progress-track']]:border-0 [&_[data-slot='progress-track']]:rounded-none [&_[data-slot='progress-track']]:bg-surface-weak [&_[data-slot='progress-fill']]:rounded-none [&_[data-slot='progress-fill']]:bg-icon-strong-base"
               aria-label={t("desktop.loading.progressAria")}
               getValueLabel={({ value }) => `${Math.round(value)}%`}
             />

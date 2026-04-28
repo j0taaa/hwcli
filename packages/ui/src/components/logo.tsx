@@ -9,8 +9,12 @@ export const Mark = (props: { class?: string }) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path data-slot="logo-logo-mark-shadow" d="M12 16H4V8H12V16Z" fill="var(--icon-weak-base)" />
-      <path data-slot="logo-logo-mark-o" d="M12 4H4V16H12V4ZM16 20H0V0H16V20Z" fill="var(--icon-strong-base)" />
+      <path data-slot="logo-logo-mark-shadow" d="M12 16H10V10H6V16H4V8H6V6H10V8H12V16Z" fill="var(--icon-weak-base)" />
+      <path
+        data-slot="logo-logo-mark-h"
+        d="M4 4V16H6V10H10V16H12V4H10V8H6V4H4ZM16 20H0V0H16V20Z"
+        fill="var(--icon-strong-base)"
+      />
     </svg>
   )
 }
@@ -25,8 +29,8 @@ export const Splash = (props: Pick<ComponentProps<"svg">, "ref" | "class">) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M60 80H20V40H60V80Z" fill="var(--icon-base)" />
-      <path d="M60 20H20V80H60V20ZM80 100H0V0H80V100Z" fill="var(--icon-strong-base)" />
+      <path d="M60 80H50V50H30V80H20V40H30V30H50V40H60V80Z" fill="var(--icon-base)" />
+      <path d="M20 20V80H30V50H50V80H60V20H50V40H30V20H20ZM80 100H0V0H80V100Z" fill="var(--icon-strong-base)" />
     </svg>
   )
 }
@@ -40,8 +44,8 @@ export const Logo = (props: { class?: string }) => {
       classList={{ [props.class ?? ""]: !!props.class }}
     >
       <g>
-        <path d="M18 30H6V18H18V30Z" fill="var(--icon-weak-base)" />
-        <path d="M18 12H6V30H18V12ZM24 36H0V6H24V36Z" fill="var(--icon-base)" />
+        <path d="M18 30H15V18H9V30H6V12H9V9H15V12H18V30Z" fill="var(--icon-weak-base)" />
+        <path d="M6 6V30H9V18H15V30H18V6H15V12H9V6H6ZM24 36H0V0H24V36Z" fill="var(--icon-base)" />
         <path d="M48 30H36V18H48V30Z" fill="var(--icon-weak-base)" />
         <path d="M36 30H48V12H36V30ZM54 36H36V42H30V6H54V36Z" fill="var(--icon-base)" />
         <path d="M84 24V30H66V24H84Z" fill="var(--icon-weak-base)" />

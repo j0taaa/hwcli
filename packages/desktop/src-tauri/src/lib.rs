@@ -11,6 +11,14 @@ mod server;
 mod window_customizer;
 mod windows;
 
+#[cfg(all(windows, target_env = "msvc"))]
+#[unsafe(no_mangle)]
+pub static __guard_eh_cont_count: usize = 0;
+
+#[cfg(all(windows, target_env = "msvc"))]
+#[unsafe(no_mangle)]
+pub static __guard_eh_cont_table: usize = 0;
+
 use crate::cli::CommandChild;
 use futures::{FutureExt, TryFutureExt};
 use std::{

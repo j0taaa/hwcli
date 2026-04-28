@@ -39,6 +39,7 @@ import { PluginCommand } from "./cli/cmd/plug"
 import { Heap } from "./cli/heap"
 import { drizzle } from "drizzle-orm/bun-sqlite"
 import { ensureProcessMetadata } from "./util/opencode-process"
+import { SimpleCommand } from "./cli/cmd/simple"
 
 const processMetadata = ensureProcessMetadata("main")
 
@@ -168,6 +169,7 @@ const cli = yargs(args)
   .command(UninstallCommand)
   .command(ServeCommand)
   .command(WebCommand)
+  .command(SimpleCommand)
   .command(ModelsCommand)
   .command(StatsCommand)
   .command(ExportCommand)

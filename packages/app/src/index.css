@@ -7,6 +7,78 @@
   font-style: normal;
 }
 
+@layer base {
+  :root[data-color-scheme="light"] {
+    --background-base: #fff5f5;
+    --background-stronger: #ffe6e6;
+    --surface-base: #fff8f8;
+    --surface-base-hover: #fff0f0;
+    --surface-raised-base: #fff1f1;
+    --surface-raised-base-hover: #ffe4e4;
+    --surface-interactive-weak: #fff0f1;
+    --surface-critical-base: #ffe4e6;
+    --text-strong: #2f0b11;
+    --text-base: #7a4149;
+    --text-weak: #a15f68;
+    --text-interactive-base: #cf0a2c;
+    --text-diff-delete-base: #cf0a2c;
+    --text-diff-delete-strong: #7d1023;
+    --button-primary-base: #cf0a2c;
+    --border-base: rgba(154, 21, 45, 0.24);
+    --border-weak-base: #f1c8cf;
+    --border-weaker-base: #f8dadd;
+    --border-interactive-base: #f28a9b;
+    --border-interactive-hover: #e95a72;
+    --border-interactive-active: #cf0a2c;
+    --border-interactive-selected: #cf0a2c;
+    --icon-base: #b44457;
+    --icon-hover: #92273a;
+    --icon-active: #7d1023;
+    --icon-strong-base: #cf0a2c;
+    --icon-weak-base: #efc2c8;
+    --icon-interactive-base: #cf0a2c;
+    --syntax-keyword: #cf0a2c;
+    --syntax-primitive: #de1b43;
+    --syntax-property: #a32039;
+    --syntax-critical: #cf0a2c;
+  }
+
+  :root[data-color-scheme="dark"] {
+    --background-base: #170608;
+    --background-stronger: #24090d;
+    --surface-base: #21080c;
+    --surface-base-hover: #2b0d12;
+    --surface-raised-base: #280d11;
+    --surface-raised-base-hover: #321116;
+    --surface-interactive-weak: #340a12;
+    --surface-critical-base: #3d1018;
+    --text-strong: #fff1f2;
+    --text-base: #f2b9c0;
+    --text-weak: #d68a95;
+    --text-interactive-base: #ff4d6d;
+    --text-diff-delete-base: #ff6b86;
+    --text-diff-delete-strong: #ffd8de;
+    --button-primary-base: #cf0a2c;
+    --border-base: rgba(255, 101, 130, 0.28);
+    --border-weak-base: #4c1820;
+    --border-weaker-base: #361015;
+    --border-interactive-base: #8b2435;
+    --border-interactive-hover: #bc3147;
+    --border-interactive-active: #ff4d6d;
+    --border-interactive-selected: #ff4d6d;
+    --icon-base: #d6808d;
+    --icon-hover: #ff9aaa;
+    --icon-active: #ffe0e5;
+    --icon-strong-base: #ff6b86;
+    --icon-weak-base: #4f1a23;
+    --icon-interactive-base: #ff4d6d;
+    --syntax-keyword: #ff6b86;
+    --syntax-primitive: #ff8ca2;
+    --syntax-property: #ff4d6d;
+    --syntax-critical: #ff6b86;
+  }
+}
+
 @layer components {
   @keyframes session-progress-whip {
     0% {
