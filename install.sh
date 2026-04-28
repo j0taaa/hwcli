@@ -32,6 +32,22 @@ download() {
   fail "curl or wget is required"
 }
 
+ensure_bun() {
+  if command -v bun >/dev/null 2>&1; then
+    return
+  fi
+
+  BUN_INSTALL_DIR="${BUN_INSTALL:-$HOME/.bun}"
+  BUN_INSTALL_SCRIPT="$TMP_DIR/bun-install.sh"
+
+  log "Bun not found, installing Bun to $BUN_INSTALL_DIR"
+  download "https://bun.sh/install" "$BUN_INSTALL_SCRIPT"
+  env BUN_INSTALL="$BUN_INSTALL_DIR" bash "$BUN_INSTALL_SCRIPT"
+  export PATH="$BUN_INSTALL_DIR/bin:$PATH"
+
+  command -v bun >/dev/null 2>&1 || fail "bun install failed"
+}
+
 write_wrapper() {
   cat > "$1" <<EOF
 #!/usr/bin/env bash
@@ -43,7 +59,8 @@ EOF
 
 install_from_source() {
   need git
-  need bun
+  need bash
+  ensure_bun
 
   SOURCE_DIR="${HWCLI_SOURCE_DIR:-$HOME/.hwcli/source}"
   rm -rf "$SOURCE_DIR"
