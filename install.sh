@@ -83,7 +83,7 @@ install_from_source() {
   mkdir -p "$(dirname "$SOURCE_DIR")"
   mkdir -p "$EXTRACT_DIR"
 
-  log "Release asset unavailable, installing from source archive"
+  log "${SOURCE_INSTALL_MESSAGE:-Release asset unavailable, installing from source archive}"
   if [ "$VERSION_INPUT" = "latest" ]; then
     SOURCE_URLS="https://codeload.github.com/$REPO/tar.gz/refs/heads/dev"
   else
@@ -230,9 +230,7 @@ else
 fi
 
 VERSION_INPUT="${VERSION:-latest}"
-if [ "$VERSION_INPUT" = "latest" ]; then
-  ASSET_URL="$INSTALL_URL/download/cli/$ASSET"
-else
+if [ "$VERSION_INPUT" != "latest" ]; then
   VERSION_TAG="${VERSION_INPUT#v}"
   ASSET_URL="$INSTALL_URL/download/cli/$ASSET?version=v$VERSION_TAG"
 fi
@@ -260,8 +258,11 @@ fi
 mkdir -p "$INSTALL_DIR"
 ensure_install_dir_on_path
 
-log "Installing HWCLI from $ASSET_URL"
-if download "$ASSET_URL" "$ARCHIVE_PATH"; then
+if [ "$VERSION_INPUT" = "latest" ]; then
+  SOURCE_INSTALL_MESSAGE="Installing latest HWCLI from source archive"
+  install_from_source
+elif download "$ASSET_URL" "$ARCHIVE_PATH"; then
+  log "Installing HWCLI from $ASSET_URL"
   if [ "$OS" = "linux" ]; then
     tar -xzf "$ARCHIVE_PATH" -C "$TMP_DIR"
   else
@@ -273,6 +274,7 @@ if download "$ASSET_URL" "$ARCHIVE_PATH"; then
   install -m 755 "$TMP_DIR/opencode" "$INSTALL_DIR/hwcli"
   install -m 755 "$TMP_DIR/opencode" "$INSTALL_DIR/opencode"
 else
+  log "Installing HWCLI from $ASSET_URL"
   install_from_source
 fi
 
