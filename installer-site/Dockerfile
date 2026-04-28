@@ -2,8 +2,9 @@ FROM oven/bun:1.3.10-alpine
 
 WORKDIR /app
 
-COPY server.ts ./server.ts
-COPY favicon-v3.svg ./favicon-v3.svg
+COPY installer-site/server.ts ./server.ts
+COPY installer-site/favicon-v3.svg ./favicon-v3.svg
+COPY install.sh ./install.sh
 
 EXPOSE 3000
 

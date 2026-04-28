@@ -1,6 +1,5 @@
 import fs from "node:fs/promises"
 
-const installUrl = "https://raw.githubusercontent.com/j0taaa/hwcli/dev/install.sh"
 const publicUrl = "https://cli.hwctools.site"
 const windowsAssetUrl =
   process.env.WINDOWS_ASSET_URL ||
@@ -284,21 +283,7 @@ function favicon() {
 }
 
 async function installer() {
-  const response = await fetch(installUrl, {
-    headers: {
-      "user-agent": "hwcli-installer-site",
-      accept: "text/plain",
-    },
-  })
-
-  if (!response.ok) {
-    return new Response("Failed to fetch install.sh\n", {
-      status: 502,
-      headers: { "content-type": "text/plain; charset=utf-8" },
-    })
-  }
-
-  return new Response(response.body, {
+  return new Response(Bun.file(new URL("./install.sh", import.meta.url)), {
     status: 200,
     headers: {
       "content-type": "text/plain; charset=utf-8",
