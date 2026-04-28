@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test"
-import type { Config } from "../../src/config"
+import type { Config } from "../../src/config/config"
 import { resolveNetworkOptionsNoConfig } from "../../src/cli/network"
 
 const originalArgv = process.argv.slice()
