@@ -6,7 +6,20 @@ const windowsAssetUrl =
   process.env.WINDOWS_ASSET_URL ||
   "https://github.com/anomalyco/opencode/releases/latest/download/opencode-desktop-windows-x64.exe"
 const windowsAssetPath = process.env.WINDOWS_ASSET_PATH
+const cliReleaseRepo = process.env.CLI_RELEASE_REPO || "anomalyco/opencode"
 const port = Number(process.env.PORT || 3000)
+
+const cliAssets = new Set([
+  "opencode-linux-arm64-musl.tar.gz",
+  "opencode-linux-arm64.tar.gz",
+  "opencode-linux-x64-baseline-musl.tar.gz",
+  "opencode-linux-x64-baseline.tar.gz",
+  "opencode-linux-x64-musl.tar.gz",
+  "opencode-linux-x64.tar.gz",
+  "opencode-darwin-arm64.zip",
+  "opencode-darwin-x64-baseline.zip",
+  "opencode-darwin-x64.zip",
+])
 
 function isCliRequest(request: Request) {
   const userAgent = request.headers.get("user-agent")?.toLowerCase() || ""
@@ -230,6 +243,37 @@ async function desktopWindows() {
   })
 }
 
+async function cliAsset(url: URL) {
+  const assetName = url.pathname.slice("/download/cli/".length)
+  if (!cliAssets.has(assetName)) {
+    return new Response("Not found\n", { status: 404 })
+  }
+
+  const version = url.searchParams.get("version")
+  const releasePath = version ? `download/${version}/${assetName}` : `latest/download/${assetName}`
+  const response = await fetch(`https://github.com/${cliReleaseRepo}/releases/${releasePath}`, {
+    headers: {
+      "user-agent": "hwcli-installer-site",
+      accept: "application/octet-stream",
+    },
+  })
+
+  if (!response.ok) {
+    return new Response("Failed to fetch CLI asset\n", {
+      status: 502,
+      headers: { "content-type": "text/plain; charset=utf-8" },
+    })
+  }
+
+  const headers = new Headers(response.headers)
+  headers.set("cache-control", "no-store")
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
+
 function favicon() {
   return new Response(Bun.file(new URL("./favicon-v3.svg", import.meta.url)), {
     headers: {
@@ -269,6 +313,7 @@ Bun.serve({
     const url = new URL(request.url)
     if (url.pathname === "/favicon-v3.svg") return favicon()
     if (url.pathname === "/install.sh") return installer()
+    if (url.pathname.startsWith("/download/cli/")) return cliAsset(url)
     if (url.pathname === "/download/windows-x64-nsis") return desktopWindows()
     if (url.pathname !== "/") return new Response("Not found\n", { status: 404 })
     if (isCliRequest(request)) return installer()

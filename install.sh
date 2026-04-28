@@ -47,6 +47,7 @@ download() {
 
 ensure_bun() {
   if command -v bun >/dev/null 2>&1; then
+    BUN_BIN="$(command -v bun)"
     return
   fi
 
@@ -58,14 +59,15 @@ ensure_bun() {
   env BUN_INSTALL="$BUN_INSTALL_DIR" bash "$BUN_INSTALL_SCRIPT"
   export PATH="$BUN_INSTALL_DIR/bin:$PATH"
 
-  command -v bun >/dev/null 2>&1 || fail "bun install failed"
+  BUN_BIN="$(command -v bun || true)"
+  [ -n "$BUN_BIN" ] || fail "bun install failed"
 }
 
 write_wrapper() {
   cat > "$1" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
-exec bun run --cwd "$SOURCE_DIR/packages/opencode" --conditions=browser ./src/index.ts "\$@"
+exec "$BUN_BIN" run --cwd "$SOURCE_DIR/packages/opencode" --conditions=browser ./src/index.ts "\$@"
 EOF
   chmod 755 "$1"
 }
@@ -229,10 +231,10 @@ fi
 
 VERSION_INPUT="${VERSION:-latest}"
 if [ "$VERSION_INPUT" = "latest" ]; then
-  ASSET_URL="https://github.com/$REPO/releases/latest/download/$ASSET"
+  ASSET_URL="$INSTALL_URL/download/cli/$ASSET"
 else
   VERSION_TAG="${VERSION_INPUT#v}"
-  ASSET_URL="https://github.com/$REPO/releases/download/v$VERSION_TAG/$ASSET"
+  ASSET_URL="$INSTALL_URL/download/cli/$ASSET?version=v$VERSION_TAG"
 fi
 
 INSTALL_DIR="$(pick_install_dir)"
