@@ -58,23 +58,46 @@ EOF
 }
 
 install_from_source() {
-  need git
   need bash
   ensure_bun
 
   SOURCE_DIR="${HWCLI_SOURCE_DIR:-$HOME/.hwcli/source}"
+  SOURCE_ARCHIVE="$TMP_DIR/source.tar.gz"
+  EXTRACT_DIR="$TMP_DIR/source"
   rm -rf "$SOURCE_DIR"
   mkdir -p "$(dirname "$SOURCE_DIR")"
+  mkdir -p "$EXTRACT_DIR"
 
-  log "Release asset unavailable, installing from source"
+  log "Release asset unavailable, installing from source archive"
   if [ "$VERSION_INPUT" = "latest" ]; then
-    git clone --depth 1 --branch dev "https://github.com/$REPO.git" "$SOURCE_DIR"
-  elif ! git clone --depth 1 --branch "v$VERSION_TAG" "https://github.com/$REPO.git" "$SOURCE_DIR"; then
-    rm -rf "$SOURCE_DIR"
-    if ! git clone --depth 1 --branch "$VERSION_TAG" "https://github.com/$REPO.git" "$SOURCE_DIR"; then
-      rm -rf "$SOURCE_DIR"
-      git clone --depth 1 --branch dev "https://github.com/$REPO.git" "$SOURCE_DIR"
+    SOURCE_URLS="https://codeload.github.com/$REPO/tar.gz/refs/heads/dev"
+  else
+    SOURCE_URLS="https://codeload.github.com/$REPO/tar.gz/refs/tags/v$VERSION_TAG https://codeload.github.com/$REPO/tar.gz/refs/tags/$VERSION_TAG https://codeload.github.com/$REPO/tar.gz/refs/heads/dev"
+  fi
+
+  DOWNLOADED_SOURCE_URL=""
+  for source_url in $SOURCE_URLS; do
+    if download "$source_url" "$SOURCE_ARCHIVE" 2>/dev/null; then
+      DOWNLOADED_SOURCE_URL="$source_url"
+      break
     fi
+  done
+
+  [ -n "$DOWNLOADED_SOURCE_URL" ] || fail "failed to download source archive"
+
+  tar -xzf "$SOURCE_ARCHIVE" -C "$EXTRACT_DIR"
+  SOURCE_ROOT=""
+  for source_root in "$EXTRACT_DIR"/*; do
+    if [ -d "$source_root" ]; then
+      SOURCE_ROOT="$source_root"
+      break
+    fi
+  done
+  [ -n "$SOURCE_ROOT" ] || fail "source archive did not contain the expected directory"
+
+  if ! mv "$SOURCE_ROOT" "$SOURCE_DIR"; then
+    rm -rf "$SOURCE_DIR"
+    mv "$SOURCE_ROOT" "$SOURCE_DIR"
   fi
 
   bun install --cwd "$SOURCE_DIR" --ignore-scripts
@@ -193,10 +216,9 @@ need mkdir
 need chmod
 need install
 need rm
+need tar
 
-if [ "$OS" = "linux" ]; then
-  need tar
-else
+if [ "$OS" != "linux" ]; then
   need unzip
 fi
 
