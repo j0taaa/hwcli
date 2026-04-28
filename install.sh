@@ -18,6 +18,19 @@ need() {
   command -v "$1" >/dev/null 2>&1 || fail "$1 is required"
 }
 
+append_path_line() {
+  profile_file="$1"
+  path_line="$2"
+
+  if [ ! -f "$profile_file" ]; then
+    printf '%s\n' "$path_line" > "$profile_file"
+    return
+  fi
+
+  grep -Fqx "$path_line" "$profile_file" && return
+  printf '\n%s\n' "$path_line" >> "$profile_file"
+}
+
 download() {
   if command -v curl >/dev/null 2>&1; then
     curl -fsSL "$1" -o "$2"
@@ -161,6 +174,21 @@ pick_install_dir() {
   printf '%s' "$HOME/.opencode/bin"
 }
 
+ensure_install_dir_on_path() {
+  if printf ':%s:' "${PATH:-}" | grep -q ":$INSTALL_DIR:"; then
+    return
+  fi
+
+  PATH_LINE="export PATH=\"$INSTALL_DIR:\$PATH\""
+  [ -n "${HOME:-}" ] || return
+
+  append_path_line "$HOME/.bashrc" "$PATH_LINE"
+
+  if [ -n "${ZSH_VERSION:-}" ] || [ -f "$HOME/.zshrc" ]; then
+    append_path_line "$HOME/.zshrc" "$PATH_LINE"
+  fi
+}
+
 OS_RAW="$(uname -s)"
 ARCH_RAW="$(uname -m)"
 
@@ -223,6 +251,7 @@ if [ "$OS" != "linux" ]; then
 fi
 
 mkdir -p "$INSTALL_DIR"
+ensure_install_dir_on_path
 
 log "Installing HWCLI from $ASSET_URL"
 if download "$ASSET_URL" "$ARCHIVE_PATH"; then
@@ -243,6 +272,7 @@ fi
 log "Installed to $INSTALL_DIR/hwcli"
 if ! printf ':%s:' "${PATH:-}" | grep -q ":$INSTALL_DIR:"; then
   log "Add $INSTALL_DIR to PATH to run hwcli directly"
+  log "Open a new shell or run: export PATH=\"$INSTALL_DIR:\$PATH\""
 fi
 log "Run: hwcli"
 log "Re-run this installer to refresh your install"
