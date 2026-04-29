@@ -10,7 +10,7 @@ Use this skill when the user wants to work with NeoCalculator, a Huawei Cloud pr
 NeoCalculator is currently available at:
 
 ```txt
-http://hwctools.site:3000/api/v1
+https://calculator.hwctools.site/api/v1
 ```
 
 ## Data Model

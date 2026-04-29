@@ -3,7 +3,7 @@
 Base URL:
 
 ```txt
-http://hwctools.site:3000/api/v1
+https://calculator.hwctools.site/api/v1
 ```
 
 ## `GET /public/services`
