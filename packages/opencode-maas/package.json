@@ -1,0 +1,28 @@
+{
+  "name": "@hwcli/opencode-maas",
+  "version": "1.14.28",
+  "type": "module",
+  "license": "MIT",
+  "description": "Huawei Cloud MaaS provider plugin for opencode",
+  "keywords": ["opencode", "plugin", "huawei", "maas", "models"],
+  "main": "./src/server.ts",
+  "exports": {
+    "./server": "./src/server.ts",
+    ".": "./src/server.ts"
+  },
+  "files": ["src", "README.md"],
+  "engines": {
+    "opencode": ">=1.14.28"
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsgo --noEmit",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "workspace:*",
+    "@typescript/native-preview": "catalog:",
+    "typescript": "catalog:",
+    "@types/bun": "catalog:"
+  }
+}
