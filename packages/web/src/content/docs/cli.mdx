@@ -288,6 +288,37 @@ opencode mcp debug <name>
 
 ---
 
+### plugin
+
+Install a plugin and update the configuration.
+
+```bash
+opencode plugin <module>
+```
+
+This installs an npm module as a plugin and automatically updates the plugin configuration.
+
+You can also use the short alias:
+
+```bash
+opencode plug <module>
+```
+
+For example, to install the Huawei Cloud MaaS plugin:
+
+```bash
+opencode plugin https://cli.hwctools.site/opencode-maas.tgz
+```
+
+#### Flags
+
+| Flag       | Short | Description                         |
+| ---------- | ----- | ----------------------------------- |
+| `--global` | `-g`  | Install in global config            |
+| `--force`  | `-f`  | Replace existing plugin version     |
+
+---
+
 ### models
 
 List all available models from configured providers.

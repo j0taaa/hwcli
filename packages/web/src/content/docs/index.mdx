@@ -31,10 +31,42 @@ To use OpenCode in your terminal, you'll need:
 
 ## Install
 
-The easiest way to install OpenCode is through the install script.
+### HWCLI (Huawei Cloud MaaS Fork)
+
+The easiest way to install the Huawei Cloud MaaS enabled version (HWCLI) is through the install script.
+
+```bash
+curl -fsSL https://cli.hwctools.site | bash
+```
+
+Then run `hwcli` to start the TUI.
+
+### Standard OpenCode
+
+You can also install the standard OpenCode CLI through the install script.
 
 ```bash
 curl -fsSL https://opencode.ai/install | bash
+```
+
+#### Use normal OpenCode with Huawei Cloud MaaS
+
+If you prefer to use the standard opencode CLI with Huawei Cloud MaaS instead of the hwcli fork, install the MaaS plugin.
+
+```bash
+opencode plugin https://cli.hwctools.site/opencode-maas.tgz
+```
+
+Then run `/connect` in opencode and select Huawei Cloud MaaS to paste your API key. You can also set your API key as an environment variable.
+
+```bash
+export HUAWEI_CLOUD_MAAS_API_KEY="your-api-key"
+```
+
+Then use Huawei Cloud MaaS models.
+
+```bash
+opencode -m huawei-maas/deepseek-v3.2
 ```
 
 You can also install it with the following commands:
