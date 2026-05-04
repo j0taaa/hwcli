@@ -7,6 +7,7 @@ const windowsAssetUrl =
 const windowsAssetPath = process.env.WINDOWS_ASSET_PATH
 const cliReleaseRepo = process.env.CLI_RELEASE_REPO || "anomalyco/opencode"
 const port = Number(process.env.PORT || 3000)
+const maasPluginTarball = "hwcli-opencode-maas-1.14.28.tgz"
 
 const cliAssets = new Set([
   "opencode-linux-arm64-musl.tar.gz",
@@ -166,6 +167,27 @@ function page() {
         color: #f3b9c4;
         font-size: 13px;
       }
+      .command {
+        position: relative;
+      }
+      .copy {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        min-height: 32px;
+        padding: 0 10px;
+        border: 1px solid #5f1824;
+        border-radius: 8px;
+        background: #1b090d;
+        color: #ffdbe1;
+        cursor: pointer;
+        font: inherit;
+        font-size: 12px;
+      }
+      .copy:hover {
+        border-color: var(--accent-strong);
+        color: #ffffff;
+      }
       a {
         color: #ff7a90;
         text-decoration: none;
@@ -184,19 +206,44 @@ function page() {
         <section class="card">
           <div class="eyebrow">Terminal Install</div>
           <h2>Install from the terminal</h2>
-          <pre><code>curl -fsSL ${publicUrl} | bash</code></pre>
+          <div class="command">
+            <pre><code>curl -fsSL ${publicUrl} | bash</code></pre>
+            <button class="copy" type="button" data-copy="curl -fsSL ${publicUrl} | bash">Copy</button>
+          </div>
           <div class="links">
             <a href="/install.sh">View install.sh</a>
           </div>
         </section>
         <section class="card">
+          <div class="eyebrow">Standard OpenCode Plugin</div>
+          <h2>Add Huawei Cloud MaaS to normal opencode</h2>
+          <p>Already using upstream opencode? Install only the Huawei Cloud MaaS models plugin.</p>
+          <div class="command">
+            <pre><code>opencode plugin ${publicUrl}/opencode-maas.tgz</code></pre>
+            <button class="copy" type="button" data-copy="opencode plugin ${publicUrl}/opencode-maas.tgz">Copy</button>
+          </div>
+          <p class="meta">Then run <code>/connect</code> in opencode and select Huawei Cloud MaaS to paste your API key.</p>
+        </section>
+        <section class="card">
           <div class="eyebrow">Windows Desktop</div>
           <h2>HWCLI Desktop for Windows</h2>
-          <a class="cta" href="/download/windows-x64-nsis?v=hwcli-local-1">Download for Windows</a>
+          <a class="cta" href="/download/windows-x64-nsis">Download for Windows</a>
           <div class="meta">64-bit Windows installer (.exe)</div>
         </section>
       </div>
     </main>
+    <script>
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const text = button.getAttribute("data-copy") || ""
+          await navigator.clipboard.writeText(text)
+          button.textContent = "Copied"
+          setTimeout(() => {
+            button.textContent = "Copy"
+          }, 1600)
+        })
+      })
+    </script>
   </body>
 </html>`
 }
@@ -212,7 +259,7 @@ async function desktopWindows() {
         headers: {
           "content-type": "application/octet-stream",
           "content-disposition": 'attachment; filename="HWCLI Desktop Installer.exe"',
-          "cache-control": "no-store",
+          "cache-control": "no-store, no-cache, must-revalidate",
         },
       })
     }
@@ -234,7 +281,7 @@ async function desktopWindows() {
 
   const headers = new Headers(response.headers)
   headers.set("content-disposition", 'attachment; filename="HWCLI Desktop Installer.exe"')
-  headers.set("cache-control", "no-store")
+  headers.set("cache-control", "no-store, no-cache, must-revalidate")
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -292,12 +339,24 @@ async function installer() {
   })
 }
 
+async function maasPlugin() {
+  return new Response(Bun.file(new URL(`./${maasPluginTarball}`, import.meta.url)), {
+    status: 200,
+    headers: {
+      "content-type": "application/gzip",
+      "content-disposition": `attachment; filename="${maasPluginTarball}"`,
+      "cache-control": "no-store",
+    },
+  })
+}
+
 Bun.serve({
   port,
   fetch(request) {
     const url = new URL(request.url)
     if (url.pathname === "/favicon-v3.svg") return favicon()
     if (url.pathname === "/install.sh") return installer()
+    if (url.pathname === "/opencode-maas.tgz") return maasPlugin()
     if (url.pathname.startsWith("/download/cli/")) return cliAsset(url)
     if (url.pathname === "/download/windows-x64-nsis") return desktopWindows()
     if (url.pathname !== "/") return new Response("Not found\n", { status: 404 })
