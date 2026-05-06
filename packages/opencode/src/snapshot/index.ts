@@ -126,6 +126,7 @@ export const layer: Layer.Layer<
           const check = yield* git(
             [
               ...quote,
+              ...(yield* globalExcludes()),
               "--git-dir",
               path.join(state.worktree, ".git"),
               "--work-tree",
@@ -160,13 +161,10 @@ export const layer: Layer.Layer<
 
         const stage = Effect.fnUntraced(function* (files: string[]) {
           if (!files.length) return
-          const result = yield* git(
-            [...cfg, ...args(["add", "--all", "--sparse", "--pathspec-from-file=-", "--pathspec-file-nul"])],
-            {
-              cwd: state.directory,
-              stdin: feed(files),
-            },
-          )
+          const result = yield* git([...cfg, ...args(["add", "--all", "--pathspec-from-file=-", "--pathspec-file-nul"])], {
+            cwd: state.directory,
+            stdin: feed(files),
+          })
           if (result.code === 0) return
           log.warn("failed to add snapshot files", {
             exitCode: result.code,
@@ -178,6 +176,12 @@ export const layer: Layer.Layer<
         const read = (file: string) => fs.readFileString(file).pipe(Effect.catch(() => Effect.succeed("")))
         const remove = (file: string) => fs.remove(file).pipe(Effect.catch(() => Effect.void))
         const locked = <A, E, R>(fx: Effect.Effect<A, E, R>) => lock(state.gitdir).withPermits(1)(fx)
+
+        const globalExcludes = Effect.fnUntraced(function* () {
+          if (!process.env.GIT_CONFIG_GLOBAL) return []
+          const match = (yield* read(process.env.GIT_CONFIG_GLOBAL)).match(/^\s*excludesFile\s*=\s*(.+)\s*$/im)
+          return match ? ["-c", `core.excludesFile=${match[1]!.trim()}`] : []
+        })
 
         const enabled = Effect.fnUntraced(function* () {
           if (state.vcs !== "git") return false
