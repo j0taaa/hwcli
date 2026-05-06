@@ -29,24 +29,19 @@ const downloadNames: Record<string, string> = {
 export async function GET({ params: { platform, channel } }: APIEvent) {
   const assetName = channel === "stable" ? prodAssetNames[platform] : betaAssetNames[platform]
   if (!assetName) return new Response(null, { status: 404 })
+  const isStableWindows = channel === "stable" && platform === "windows-x64-nsis"
 
-  const assetUrl =
-    channel === "stable" && platform === "windows-x64-nsis"
-      ? "https://cli.hwctools.site/download/windows-x64-nsis"
-      : `https://github.com/anomalyco/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`
+  const assetUrl = isStableWindows
+    ? "https://cli.hwctools.site/download/windows-x64-nsis"
+    : `https://github.com/anomalyco/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`
 
-  const resp = await fetch(assetUrl, {
-    cf: {
-      // in case the upstream download source has rate limits
-      cacheTtl: 60 * 5,
-      cacheEverything: true,
-    },
-  } as any)
+  const resp = await fetch(assetUrl)
 
   const downloadName = downloadNames[platform]
 
   const headers = new Headers(resp.headers)
   if (downloadName) headers.set("content-disposition", `attachment; filename="${downloadName}"`)
+  headers.set("cache-control", "no-store, no-cache, must-revalidate")
 
   return new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers })
 }

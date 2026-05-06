@@ -10,7 +10,7 @@ Unicode true
 
 Name "${APP_NAME}"
 OutFile "${OUT_FILE}"
-InstallDir "$PROGRAMFILES64\${APP_NAME}"
+InstallDir "$LOCALAPPDATA\${APP_NAME}"
 InstallDirRegKey HKCU "Software\${APP_NAME}" "InstallDir"
 RequestExecutionLevel user
 BrandingText "HWCLI"
@@ -33,6 +33,16 @@ BrandingText "HWCLI"
 !insertmacro MUI_UNPAGE_FINISH
 
 !insertmacro MUI_LANGUAGE "English"
+
+Function .onInit
+  ReadRegStr $0 HKCU "Software\${APP_NAME}" "InstallDir"
+  StrCmp $0 "$PROGRAMFILES64\${APP_NAME}" 0 +3
+    StrCpy $INSTDIR "$LOCALAPPDATA\${APP_NAME}"
+    WriteRegStr HKCU "Software\${APP_NAME}" "InstallDir" "$INSTDIR"
+  StrCmp $0 "$PROGRAMFILES\${APP_NAME}" 0 +3
+    StrCpy $INSTDIR "$LOCALAPPDATA\${APP_NAME}"
+    WriteRegStr HKCU "Software\${APP_NAME}" "InstallDir" "$INSTDIR"
+FunctionEnd
 
 Section "Install"
   SetOutPath "$INSTDIR"

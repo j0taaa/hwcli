@@ -17,6 +17,7 @@
         "args": ["-ExecutionPolicy", "Bypass", "-File", "../../../script/sign-windows.ps1", "%1"]
       },
       "nsis": {
+        "installMode": "currentUser",
         "installerIcon": "icons/beta/icon.ico"
       }
     },
