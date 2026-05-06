@@ -1,5 +1,5 @@
 import { test, expect, describe } from "bun:test"
-import { resolvePluginProviders } from "../../src/cli/cmd/providers"
+import { PROVIDERS_LOGIN_PRIORITY, resolvePluginProviders } from "../../src/cli/cmd/providers"
 import type { Hooks } from "@opencode-ai/plugin"
 
 function hookWithAuth(provider: string): Hooks {
@@ -16,6 +16,11 @@ function hookWithoutAuth(): Hooks {
 }
 
 describe("resolvePluginProviders", () => {
+  test("prioritizes Huawei MaaS first for login provider selection", () => {
+    expect(PROVIDERS_LOGIN_PRIORITY["huawei-maas"]).toBe(0)
+    expect(PROVIDERS_LOGIN_PRIORITY.opencode).toBeGreaterThan(PROVIDERS_LOGIN_PRIORITY["huawei-maas"])
+  })
+
   test("returns plugin providers not in models.dev", () => {
     const result = resolvePluginProviders({
       hooks: [hookWithAuth("portkey")],

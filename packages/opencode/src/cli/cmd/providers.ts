@@ -210,6 +210,17 @@ export function resolvePluginProviders(input: {
   return result
 }
 
+export const PROVIDERS_LOGIN_PRIORITY: Record<string, number> = {
+  "huawei-maas": 0,
+  opencode: 1,
+  openai: 2,
+  "github-copilot": 3,
+  google: 4,
+  anthropic: 5,
+  openrouter: 6,
+  vercel: 7,
+}
+
 export const ProvidersCommand = cmd({
   command: "providers",
   aliases: ["auth"],
@@ -347,16 +358,6 @@ export const ProvidersLoginCommand = cmd({
           }),
         )
 
-        const priority: Record<string, number> = {
-          opencode: 0,
-          openai: 1,
-          "github-copilot": 2,
-          google: 3,
-          anthropic: 4,
-          openrouter: 5,
-          vercel: 6,
-          "huawei-maas": 7,
-        }
         const pluginProviders = resolvePluginProviders({
           hooks,
           existingProviders: providers,
@@ -369,7 +370,7 @@ export const ProvidersLoginCommand = cmd({
             providers,
             values(),
             sortBy(
-              (x) => priority[x.id] ?? 99,
+              (x) => PROVIDERS_LOGIN_PRIORITY[x.id] ?? 99,
               (x) => x.name ?? x.id,
             ),
             map((x) => ({
