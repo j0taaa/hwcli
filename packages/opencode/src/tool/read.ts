@@ -186,7 +186,7 @@ export const ReadTool = Tool.define(
       if (stat.type === "Directory") {
         const items = yield* list(filepath)
         const limit = params.limit ?? DEFAULT_READ_LIMIT
-        const offset = params.offset || 1
+        const offset = params.offset ?? 1
         const start = offset - 1
         const sliced = items.slice(start, start + limit)
         const truncated = start + sliced.length < items.length
@@ -243,7 +243,7 @@ export const ReadTool = Tool.define(
       }
 
       const file = yield* Effect.promise(() =>
-        lines(filepath, { limit: params.limit ?? DEFAULT_READ_LIMIT, offset: params.offset || 1 }),
+        lines(filepath, { limit: params.limit ?? DEFAULT_READ_LIMIT, offset: params.offset ?? 1 }),
       )
       if (file.count < file.offset && !(file.count === 0 && file.offset === 1)) {
         return yield* Effect.fail(
