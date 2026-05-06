@@ -18,7 +18,7 @@ import { Shell } from "@/shell/shell"
 import { BashArity } from "@/permission/arity"
 import * as Truncate from "./truncate"
 import { Plugin } from "@/plugin"
-import { Effect, Stream } from "effect"
+import { Effect, Fiber, Stream } from "effect"
 import { ChildProcess } from "effect/unstable/process"
 import { ChildProcessSpawner } from "effect/unstable/process/ChildProcessSpawner"
 import { InstanceState } from "@/effect/instance-state"
@@ -288,8 +288,7 @@ function cmd(shell: string, command: string, cwd: string, env: NodeJS.ProcessEnv
     })
   }
 
-  return ChildProcess.make(command, [], {
-    shell,
+  return ChildProcess.make(shell, Shell.args(shell, command, cwd), {
     cwd,
     env,
     stdin: "ignore",
@@ -439,8 +438,8 @@ export const BashTool = Tool.define(
         Effect.gen(function* () {
           const handle = yield* spawner.spawn(cmd(input.shell, input.command, input.cwd, input.env))
 
-          yield* Effect.forkScoped(
-            Stream.runForEach(Stream.decodeText(handle.all), (chunk) => {
+          const consume = (stream: typeof handle.stdout) =>
+            Stream.runForEach(Stream.decodeText(stream), (chunk) => {
               const size = Buffer.byteLength(chunk, "utf-8")
               list.push({ text: chunk, size })
               used += size
@@ -485,8 +484,9 @@ export const BashTool = Tool.define(
                   description: input.description,
                 },
               })
-            }),
-          )
+            })
+          const stdout = yield* Effect.forkScoped(consume(handle.stdout))
+          const stderr = yield* Effect.forkScoped(consume(handle.stderr))
 
           const abort = Effect.callback<void>((resume) => {
             if (ctx.abort.aborted) return resume(Effect.void)
@@ -511,6 +511,8 @@ export const BashTool = Tool.define(
             expired = true
             yield* handle.kill({ forceKillAfter: "3 seconds" }).pipe(Effect.orDie)
           }
+          yield* Fiber.join(stdout)
+          yield* Fiber.join(stderr)
 
           return exit.kind === "exit" ? exit.code : null
         }),
