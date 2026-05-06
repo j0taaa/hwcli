@@ -8,7 +8,7 @@ import { DialogPrompt } from "../ui/dialog-prompt"
 import { Link } from "../ui/link"
 import { useTheme } from "../context/theme"
 import { TextAttributes } from "@opentui/core"
-import type { ProviderAuthAuthorization, ProviderAuthMethod } from "@opencode-ai/sdk/v2"
+import type { Provider, ProviderAuthAuthorization, ProviderAuthMethod } from "@opencode-ai/sdk/v2"
 import { DialogModel } from "./dialog-model"
 import { useKeyboard } from "@opentui/solid"
 import * as Clipboard from "@tui/util/clipboard"
@@ -26,6 +26,10 @@ const PROVIDER_PRIORITY: Record<string, number> = {
   google: 6,
 }
 
+export function sortDialogProviders<T extends Pick<Provider, "id">>(providers: T[]) {
+  return sortBy(providers, (provider) => PROVIDER_PRIORITY[provider.id] ?? 99)
+}
+
 export function createDialogProviderOptions() {
   const sync = useSync()
   const dialog = useDialog()
@@ -35,8 +39,7 @@ export function createDialogProviderOptions() {
   const onboarded = useConnected()
   const options = createMemo(() => {
     return pipe(
-      sync.data.provider_next.all,
-      sortBy((x) => PROVIDER_PRIORITY[x.id] ?? 99),
+      sortDialogProviders(sync.data.provider_next.all),
       map((provider) => {
         const consoleManaged = isConsoleManagedProvider(sync.data.console_state.consoleManagedProviders, provider.id)
         const connected = sync.data.provider_next.connected.includes(provider.id)
