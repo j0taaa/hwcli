@@ -39,6 +39,12 @@ const emptyAuth = Layer.mock(Auth.Service)({
   all: () => Effect.succeed({}),
 })
 
+const noopNpm = Layer.mock(Npm.Service)({
+  install: () => Effect.void,
+  add: () => Effect.die("not implemented"),
+  which: () => Effect.succeed(Option.none()),
+})
+
 const testFlock = EffectFlock.defaultLayer
 
 const layer = Config.layer.pipe(
@@ -986,11 +992,6 @@ test("installs dependencies in writable OPENCODE_CONFIG_DIR", async () => {
   const prev = process.env.OPENCODE_CONFIG_DIR
   process.env.OPENCODE_CONFIG_DIR = tmp.extra
 
-  const noopNpm = Layer.mock(Npm.Service)({
-    install: () => Effect.void,
-    add: () => Effect.die("not implemented"),
-    which: () => Effect.succeed(Option.none()),
-  })
   const testLayer = Config.layer.pipe(
     Layer.provide(testFlock),
     Layer.provide(AppFileSystem.defaultLayer),
@@ -1887,20 +1888,22 @@ test("project config overrides remote well-known config", async () => {
   )
 
   try {
-    await provideTmpdirInstance(
-      () =>
-        Config.Service.use((svc) =>
-          Effect.gen(function* () {
-            const config = yield* svc.get()
-            expect(fetchedUrl).toBe("https://example.com/.well-known/opencode")
-            expect(config.mcp?.jira?.enabled).toBe(true)
-          }),
-        ),
-      {
-        git: true,
-        config: { mcp: { jira: { type: "remote", url: "https://jira.example.com/mcp", enabled: true } } },
-      },
-    ).pipe(Effect.scoped, Effect.provide(layer), Effect.runPromise)
+    await Effect.runPromise(
+      provideTmpdirInstance(
+        () =>
+          Config.Service.use((svc) =>
+            Effect.gen(function* () {
+              const config = yield* svc.get()
+              expect(fetchedUrl).toBe("https://example.com/.well-known/opencode")
+              expect(config.mcp?.jira?.enabled).toBe(true)
+            }),
+          ),
+        {
+          git: true,
+          config: { mcp: { jira: { type: "remote", url: "https://jira.example.com/mcp", enabled: true } } },
+        },
+      ).pipe(Effect.scoped, Effect.provide(layer)),
+    )
   } finally {
     globalThis.fetch = originalFetch
   }
@@ -1945,16 +1948,18 @@ test("wellknown URL with trailing slash is normalized", async () => {
   )
 
   try {
-    await provideTmpdirInstance(
-      () =>
-        Config.Service.use((svc) =>
-          Effect.gen(function* () {
-            yield* svc.get()
-            expect(fetchedUrl).toBe("https://example.com/.well-known/opencode")
-          }),
-        ),
-      { git: true },
-    ).pipe(Effect.scoped, Effect.provide(layer), Effect.runPromise)
+    await Effect.runPromise(
+      provideTmpdirInstance(
+        () =>
+          Config.Service.use((svc) =>
+            Effect.gen(function* () {
+              yield* svc.get()
+              expect(fetchedUrl).toBe("https://example.com/.well-known/opencode")
+            }),
+          ),
+        { git: true },
+      ).pipe(Effect.scoped, Effect.provide(layer)),
+    )
   } finally {
     globalThis.fetch = originalFetch
   }
@@ -2017,19 +2022,21 @@ test("wellknown remote_config supports templated env vars in headers", async () 
   )
 
   try {
-    await provideTmpdirInstance(
-      () =>
-        Config.Service.use((svc) =>
-          Effect.gen(function* () {
-            const config = yield* svc.get()
-            expect(wellknownFetchedUrl).toBe("https://example.com/.well-known/opencode")
-            expect(remoteFetchedUrl).toBe("https://config.example.com/opencode.json")
-            expect(remoteHeaders).toEqual({ Authorization: "Bearer test-token" })
-            expect(config.mcp?.confluence?.enabled).toBe(true)
-          }),
-        ),
-      { git: true },
-    ).pipe(Effect.scoped, Effect.provide(layer), Effect.runPromise)
+    await Effect.runPromise(
+      provideTmpdirInstance(
+        () =>
+          Config.Service.use((svc) =>
+            Effect.gen(function* () {
+              const config = yield* svc.get()
+              expect(wellknownFetchedUrl).toBe("https://example.com/.well-known/opencode")
+              expect(remoteFetchedUrl).toBe("https://config.example.com/opencode.json")
+              expect(remoteHeaders).toEqual({ Authorization: "Bearer test-token" })
+              expect(config.mcp?.confluence?.enabled).toBe(true)
+            }),
+          ),
+        { git: true },
+      ).pipe(Effect.scoped, Effect.provide(layer)),
+    )
   } finally {
     globalThis.fetch = originalFetch
     if (originalToken === undefined) delete process.env.TEST_TOKEN
