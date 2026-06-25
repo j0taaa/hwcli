@@ -8,6 +8,19 @@ const windowsAssetPath = process.env.WINDOWS_ASSET_PATH
 const cliReleaseRepo = process.env.CLI_RELEASE_REPO || "anomalyco/opencode"
 const port = Number(process.env.PORT || 3000)
 const maasPluginTarball = "hwcli-opencode-maas-1.14.28.tgz"
+const maasCatalogUrl = "https://catalog.hwctools.site/models"
+const maasAnthropicUrl = "https://api-ap-southeast-1.modelarts-maas.com/anthropic"
+const claudeModelPrefix = "claude-huawei-maas-"
+
+type MaasCatalog = {
+  models?: {
+    id?: unknown
+    name?: unknown
+    limits?: {
+      contextWindowTokens?: unknown
+    }
+  }[]
+}
 
 const cliAssets = new Set([
   "opencode-linux-arm64-musl.tar.gz",
@@ -241,12 +254,12 @@ function page() {
         <section class="card">
           <div class="eyebrow">Claude Code</div>
           <h2>Use Huawei Cloud MaaS with Claude Code</h2>
-          <p>Point Claude Code at the Huawei Cloud MaaS Anthropic-compatible endpoint.</p>
+          <p>Use the HWCLI MaaS gateway so Claude Code can discover every Huawei Cloud MaaS model in <code>/model</code>.</p>
           <div class="command">
-            <pre><code>ANTHROPIC_BASE_URL="https://api-ap-southeast-1.modelarts-maas.com/anthropic" ANTHROPIC_API_KEY="YOUR_HUAWEI_MAAS_API_KEY" ANTHROPIC_MODEL="glm-5.2" claude --bare</code></pre>
+            <pre><code>ANTHROPIC_BASE_URL="${publicUrl}/huawei-maas/anthropic" ANTHROPIC_API_KEY="YOUR_HUAWEI_MAAS_API_KEY" ANTHROPIC_MODEL="claude-huawei-maas-glm-5.2" CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1 claude --bare</code></pre>
             <button class="copy" type="button">Copy</button>
           </div>
-          <p class="meta"><code>--bare</code> skips Claude Code's first-run setup and uses the MaaS API key directly.</p>
+          <p class="meta">The gateway exposes <code>/v1/models</code> for Claude Code's picker, then rewrites <code>claude-huawei-maas-*</code> aliases back to MaaS model IDs.</p>
         </section>
         <section class="card">
           <div class="eyebrow">Codex</div>
@@ -256,7 +269,7 @@ function page() {
             <pre><code>HUAWEI_CLOUD_MAAS_API_KEY="YOUR_HUAWEI_MAAS_API_KEY" npx -y @openai/codex@0.80.0 exec --skip-git-repo-check -c 'model="glm-5.2"' -c 'model_provider="huawei-maas"' -c 'model_providers.huawei-maas.name="Huawei Cloud MaaS"' -c 'model_providers.huawei-maas.base_url="https://api-ap-southeast-1.modelarts-maas.com/openai/v1"' -c 'model_providers.huawei-maas.env_key="HUAWEI_CLOUD_MAAS_API_KEY"' -c 'model_providers.huawei-maas.wire_api="chat"' "Reply exactly OK and nothing else."</code></pre>
             <button class="copy" type="button">Copy</button>
           </div>
-          <p class="meta">Pinned to Codex <code>0.80.0</code>, the latest stable version tested working with Huawei Cloud MaaS chat completions.</p>
+          <p class="meta">Pinned to Codex <code>0.80.0</code>, the latest stable version tested working with Huawei Cloud MaaS chat completions. Current Codex builds can load the MaaS model list from <code>${publicUrl}/codex-maas-models.json</code>, but require a Responses-compatible endpoint to run.</p>
         </section>
         <section class="card">
           <div class="eyebrow">Pi</div>
@@ -424,6 +437,127 @@ function sitemap() {
   })
 }
 
+function json(input: unknown, init?: ResponseInit) {
+  const headers = new Headers(init?.headers)
+  headers.set("content-type", "application/json; charset=utf-8")
+  return new Response(JSON.stringify(input, null, 2) + "\n", { ...init, headers })
+}
+
+async function maasCatalog() {
+  return (await fetch(maasCatalogUrl, {
+    headers: {
+      "user-agent": "hwcli-installer-site",
+      accept: "application/json",
+    },
+  }).then((response) => response.json())) as MaasCatalog
+}
+
+function maasModelId(input: string) {
+  if (!input.startsWith(claudeModelPrefix)) return input
+  return input.slice(claudeModelPrefix.length)
+}
+
+async function claudeGatewayModels() {
+  const models = (await maasCatalog()).models ?? []
+  return json(
+    {
+      data: models
+        .filter((model) => typeof model.id === "string" && typeof model.name === "string")
+        .map((model) => ({
+          id: `${claudeModelPrefix}${model.id}`,
+          display_name: `Huawei MaaS ${model.name}`,
+        })),
+    },
+    { headers: { "cache-control": "public, max-age=300" } },
+  )
+}
+
+async function codexMaasCatalog() {
+  const models = (await maasCatalog()).models ?? []
+  return json(
+    {
+      models: models
+        .filter((model) => typeof model.id === "string" && typeof model.name === "string")
+        .map((model, index) => ({
+          slug: model.id,
+          display_name: model.name,
+          description: "Huawei Cloud MaaS model",
+          default_reasoning_level: "none",
+          supported_reasoning_levels: [],
+          shell_type: "default",
+          visibility: "list",
+          supported_in_api: true,
+          priority: models.length - index,
+          additional_speed_tiers: [],
+          service_tiers: [],
+          default_service_tier: null,
+          availability_nux: null,
+          upgrade: null,
+          base_instructions: "You are a helpful coding assistant.",
+          model_messages: null,
+          supports_reasoning_summaries: false,
+          default_reasoning_summary: "none",
+          support_verbosity: false,
+          default_verbosity: null,
+          apply_patch_tool_type: null,
+          web_search_tool_type: "text",
+          truncation_policy: {
+            mode: "tokens",
+            limit: typeof model.limits?.contextWindowTokens === "number" ? model.limits.contextWindowTokens : 128000,
+          },
+          supports_parallel_tool_calls: true,
+          supports_image_detail_original: false,
+          context_window: typeof model.limits?.contextWindowTokens === "number" ? model.limits.contextWindowTokens : null,
+          max_context_window: typeof model.limits?.contextWindowTokens === "number" ? model.limits.contextWindowTokens : null,
+          auto_compact_token_limit: null,
+          comp_hash: null,
+          effective_context_window_percent: 95,
+          experimental_supported_tools: [],
+          input_modalities: ["text"],
+          supports_search_tool: false,
+          use_responses_lite: false,
+          auto_review_model_override: null,
+          tool_mode: null,
+          multi_agent_version: null,
+        })),
+    },
+    { headers: { "cache-control": "public, max-age=300" } },
+  )
+}
+
+async function claudeGateway(request: Request, url: URL) {
+  const gatewayPath = url.pathname.slice("/huawei-maas/anthropic".length)
+  if (request.method === "HEAD" && gatewayPath === "/") return new Response(null, { status: 204 })
+  if (request.method === "GET" && gatewayPath === "/v1/models") return claudeGatewayModels()
+  if (request.method !== "POST" || (gatewayPath !== "/v1/messages" && gatewayPath !== "/v1/messages/count_tokens")) {
+    return new Response("Not found\n", { status: 404 })
+  }
+
+  const body = (await request.json()) as Record<string, unknown>
+  if (typeof body.model === "string") body.model = maasModelId(body.model)
+
+  const headers = new Headers()
+  for (const name of ["authorization", "x-api-key", "anthropic-version", "anthropic-beta", "content-type"] as const) {
+    const value = request.headers.get(name)
+    if (value) headers.set(name, value)
+  }
+  if (!headers.has("content-type")) headers.set("content-type", "application/json")
+
+  const response = await fetch(`${maasAnthropicUrl}${gatewayPath}${url.search}`, {
+    method: request.method,
+    headers,
+    body: JSON.stringify(body),
+  })
+  const responseHeaders = new Headers(response.headers)
+  responseHeaders.delete("content-encoding")
+  responseHeaders.delete("content-length")
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: responseHeaders,
+  })
+}
+
 async function installer() {
   return new Response(Bun.file(new URL("./install.sh", import.meta.url)), {
     status: 200,
@@ -454,6 +588,8 @@ Bun.serve({
     if (url.pathname === "/sitemap.xml") return sitemap()
     if (url.pathname === "/install.sh") return installer()
     if (url.pathname === "/opencode-maas.tgz") return maasPlugin()
+    if (url.pathname === "/codex-maas-models.json") return codexMaasCatalog()
+    if (url.pathname.startsWith("/huawei-maas/anthropic")) return claudeGateway(request, url)
     if (url.pathname.startsWith("/download/cli/")) return cliAsset(url)
     if (url.pathname === "/download/windows-x64-nsis") return desktopWindows()
     if (url.pathname !== "/") return new Response("Not found\n", { status: 404 })
