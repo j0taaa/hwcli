@@ -256,10 +256,10 @@ function page() {
           <h2>Use Huawei Cloud MaaS with Claude Code</h2>
           <p>Use the HWCLI MaaS gateway so Claude Code can discover every Huawei Cloud MaaS model in <code>/model</code>.</p>
           <div class="command">
-            <pre><code>ANTHROPIC_BASE_URL="${publicUrl}/huawei-maas/anthropic" ANTHROPIC_API_KEY="YOUR_HUAWEI_MAAS_API_KEY" ANTHROPIC_MODEL="claude-huawei-maas-glm-5.2" CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1 claude --bare</code></pre>
+            <pre><code>mkdir -p ~/.claude && printf '%s\n' '#!/usr/bin/env sh' "printf '%s\n' 'YOUR_HUAWEI_MAAS_API_KEY'" > ~/.claude/huawei-maas-api-key && chmod 700 ~/.claude/huawei-maas-api-key && node -e 'const fs=require("fs"),os=require("os"),path=require("path");const file=path.join(os.homedir(),".claude","settings.json");const settings=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,"utf8")):{};settings.model="claude-huawei-maas-glm-5.2";settings.apiKeyHelper=path.join(os.homedir(),".claude","huawei-maas-api-key");settings.env={...(settings.env||{}),ANTHROPIC_BASE_URL:"${publicUrl}/huawei-maas/anthropic",CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY:"1"};delete settings.env.ANTHROPIC_API_KEY;fs.writeFileSync(file,JSON.stringify(settings,null,2)+"\n")' && claude --bare</code></pre>
             <button class="copy" type="button">Copy</button>
           </div>
-          <p class="meta">The gateway exposes <code>/v1/models</code> for Claude Code's picker, then rewrites <code>claude-huawei-maas-*</code> aliases back to MaaS model IDs.</p>
+          <p class="meta">Uses <code>apiKeyHelper</code> so plain <code>claude</code> starts on MaaS without the custom API key approval prompt.</p>
         </section>
         <section class="card">
           <div class="eyebrow">Codex</div>
