@@ -35,10 +35,24 @@ function page() {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="HWCLI installer page for terminal installation, Huawei Cloud MaaS plugin setup, and Windows desktop downloads." />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="${publicUrl}/" />
+    <meta property="og:title" content="HWCLI Installer" />
+    <meta property="og:description" content="Install HWCLI from the terminal, add the Huawei Cloud MaaS plugin, or download the Windows desktop app." />
+    <meta property="og:url" content="${publicUrl}/" />
+    <meta property="og:site_name" content="HWCLI Installer" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="HWCLI Installer" />
+    <meta name="twitter:description" content="Install HWCLI from the terminal, add the Huawei Cloud MaaS plugin, or download the Windows desktop app." />
     <title>HWCLI Installer</title>
     <link rel="icon" type="image/svg+xml" href="/favicon-v3.svg" />
     <meta name="theme-color" content="#c7002b" />
     <meta name="theme-color" content="#170608" media="(prefers-color-scheme: dark)" />
+    <script type="application/ld+json">
+      {"@context":"https://schema.org","@type":"SoftwareApplication","name":"HWCLI","applicationCategory":"DeveloperApplication","operatingSystem":"Linux, macOS, Windows","url":"${publicUrl}/","description":"Install HWCLI from the terminal, add the Huawei Cloud MaaS plugin, or download the Windows desktop app."}
+    </script>
     <style>
       :root {
         color-scheme: dark;
@@ -225,6 +239,46 @@ function page() {
           <p class="meta">Then run <code>/connect</code> in opencode and select Huawei Cloud MaaS to paste your API key.</p>
         </section>
         <section class="card">
+          <div class="eyebrow">Claude Code</div>
+          <h2>Use Huawei Cloud MaaS with Claude Code</h2>
+          <p>Point Claude Code at the Huawei Cloud MaaS Anthropic-compatible endpoint.</p>
+          <div class="command">
+            <pre><code>ANTHROPIC_BASE_URL="https://api-ap-southeast-1.modelarts-maas.com/anthropic" ANTHROPIC_API_KEY="YOUR_HUAWEI_MAAS_API_KEY" ANTHROPIC_MODEL="glm-5.2" claude --bare</code></pre>
+            <button class="copy" type="button">Copy</button>
+          </div>
+          <p class="meta"><code>--bare</code> skips Claude Code's first-run setup and uses the MaaS API key directly.</p>
+        </section>
+        <section class="card">
+          <div class="eyebrow">Codex</div>
+          <h2>Use Huawei Cloud MaaS with Codex</h2>
+          <p>Run Codex with Huawei Cloud MaaS through the OpenAI-compatible chat completions endpoint.</p>
+          <div class="command">
+            <pre><code>HUAWEI_CLOUD_MAAS_API_KEY="YOUR_HUAWEI_MAAS_API_KEY" npx -y @openai/codex@0.80.0 exec --skip-git-repo-check -c 'model="glm-5.2"' -c 'model_provider="huawei-maas"' -c 'model_providers.huawei-maas.name="Huawei Cloud MaaS"' -c 'model_providers.huawei-maas.base_url="https://api-ap-southeast-1.modelarts-maas.com/openai/v1"' -c 'model_providers.huawei-maas.env_key="HUAWEI_CLOUD_MAAS_API_KEY"' -c 'model_providers.huawei-maas.wire_api="chat"' "Reply exactly OK and nothing else."</code></pre>
+            <button class="copy" type="button">Copy</button>
+          </div>
+          <p class="meta">Pinned to Codex <code>0.80.0</code>, the latest stable version tested working with Huawei Cloud MaaS chat completions.</p>
+        </section>
+        <section class="card">
+          <div class="eyebrow">Pi</div>
+          <h2>Use Huawei Cloud MaaS with Pi</h2>
+          <p>Add Huawei Cloud MaaS as an OpenAI-compatible provider in Pi.</p>
+          <div class="command">
+            <pre><code>mkdir -p ~/.pi/agent && printf '%s\\n' '{"providers":{"huawei-maas":{"name":"Huawei Cloud MaaS","baseUrl":"https://api-ap-southeast-1.modelarts-maas.com/openai/v1","api":"openai-completions","apiKey":"YOUR_HUAWEI_MAAS_API_KEY","compat":{"supportsDeveloperRole":false,"supportsReasoningEffort":false,"supportsUsageInStreaming":true},"models":[{"id":"glm-5.2","name":"glm-5.2","reasoning":true,"input":["text"]}]}}}' > ~/.pi/agent/models.json && pi --provider huawei-maas --model glm-5.2</code></pre>
+            <button class="copy" type="button">Copy</button>
+          </div>
+          <p class="meta">Creates a minimal Pi models config, then starts Pi with the Huawei Cloud MaaS provider.</p>
+        </section>
+        <section class="card">
+          <div class="eyebrow">Cursor CLI</div>
+          <h2>Cursor Agent status</h2>
+          <p>Cursor Agent installs as <code>agent</code>, but this CLI does not currently expose an OpenAI-compatible endpoint override.</p>
+          <div class="command">
+            <pre><code>curl https://cursor.com/install -fsS | bash && agent login</code></pre>
+            <button class="copy" type="button">Copy</button>
+          </div>
+          <p class="meta">Use this to install and authenticate Cursor Agent. Huawei Cloud MaaS is not listed here until Cursor exposes a custom base URL option.</p>
+        </section>
+        <section class="card">
           <div class="eyebrow">Windows Desktop</div>
           <h2>HWCLI Desktop for Windows</h2>
           <a class="cta" href="/download/windows-x64-nsis">Download for Windows</a>
@@ -236,6 +290,16 @@ function page() {
       document.querySelectorAll("[data-copy]").forEach((button) => {
         button.addEventListener("click", async () => {
           const text = button.getAttribute("data-copy") || ""
+          await navigator.clipboard.writeText(text)
+          button.textContent = "Copied"
+          setTimeout(() => {
+            button.textContent = "Copy"
+          }, 1600)
+        })
+      })
+      document.querySelectorAll(".command .copy:not([data-copy])").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const text = button.closest(".command")?.querySelector("code")?.textContent || ""
           await navigator.clipboard.writeText(text)
           button.textContent = "Copied"
           setTimeout(() => {
@@ -329,6 +393,37 @@ function favicon() {
   })
 }
 
+function robots() {
+  return new Response(`User-agent: *
+Allow: /
+Disallow: /download/
+
+Sitemap: ${publicUrl}/sitemap.xml
+`, {
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "public, max-age=3600",
+    },
+  })
+}
+
+function sitemap() {
+  return new Response(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${publicUrl}/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+`, {
+    headers: {
+      "content-type": "application/xml; charset=utf-8",
+      "cache-control": "public, max-age=3600",
+    },
+  })
+}
+
 async function installer() {
   return new Response(Bun.file(new URL("./install.sh", import.meta.url)), {
     status: 200,
@@ -355,6 +450,8 @@ Bun.serve({
   fetch(request) {
     const url = new URL(request.url)
     if (url.pathname === "/favicon-v3.svg") return favicon()
+    if (url.pathname === "/robots.txt") return robots()
+    if (url.pathname === "/sitemap.xml") return sitemap()
     if (url.pathname === "/install.sh") return installer()
     if (url.pathname === "/opencode-maas.tgz") return maasPlugin()
     if (url.pathname.startsWith("/download/cli/")) return cliAsset(url)
