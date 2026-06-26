@@ -255,8 +255,14 @@ function page() {
           <div class="eyebrow">Claude Code</div>
           <h2>Use Huawei Cloud MaaS with Claude Code</h2>
           <p>Use the HWCLI MaaS gateway so Claude Code can discover every Huawei Cloud MaaS model in <code>/model</code>.</p>
+          <p class="meta">macOS, Linux, WSL, Git Bash</p>
           <div class="command">
             <pre><code>mkdir -p ~/.claude && printf '%s\n' '#!/usr/bin/env sh' "printf '%s\n' 'YOUR_HUAWEI_MAAS_API_KEY'" > ~/.claude/huawei-maas-api-key && chmod 700 ~/.claude/huawei-maas-api-key && node -e 'const fs=require("fs"),os=require("os"),path=require("path");const file=path.join(os.homedir(),".claude","settings.json");const settings=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,"utf8")):{};settings.model="claude-huawei-maas-glm-5.2";settings.apiKeyHelper=path.join(os.homedir(),".claude","huawei-maas-api-key");settings.env={...(settings.env||{}),ANTHROPIC_BASE_URL:"${publicUrl}/huawei-maas/anthropic",CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY:"1"};delete settings.env.ANTHROPIC_API_KEY;fs.writeFileSync(file,JSON.stringify(settings,null,2)+"\n")' && claude --bare</code></pre>
+            <button class="copy" type="button">Copy</button>
+          </div>
+          <p class="meta">Windows PowerShell</p>
+          <div class="command">
+            <pre><code>New-Item -ItemType Directory -Force "$HOME/.claude" | Out-Null; Set-Content -Path "$HOME/.claude/huawei-maas-api-key.cmd" -Value '@echo off','echo YOUR_HUAWEI_MAAS_API_KEY'; node -e "const fs=require('fs'),os=require('os'),path=require('path');const file=path.join(os.homedir(),'.claude','settings.json');const settings=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{};settings.model='claude-huawei-maas-glm-5.2';settings.apiKeyHelper=path.join(os.homedir(),'.claude','huawei-maas-api-key.cmd');settings.env={...(settings.env||{}),ANTHROPIC_BASE_URL:'${publicUrl}/huawei-maas/anthropic',CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY:'1'};delete settings.env.ANTHROPIC_API_KEY;fs.writeFileSync(file,JSON.stringify(settings,null,2)+'\n')"; claude --bare</code></pre>
             <button class="copy" type="button">Copy</button>
           </div>
           <p class="meta">Uses <code>apiKeyHelper</code> so plain <code>claude</code> starts on MaaS without the custom API key approval prompt.</p>
